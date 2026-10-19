@@ -1,0 +1,120 @@
+name: CI
+
+# Carried from deree. Vercel builds and deploys on its own; this runs the same
+# checks, plus the waitlist pipeline's tests, before a change reaches it.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# read:packages is what lets pnpm resolve @ekdotico/domico from GitHub Packages.
+# It is not part of the default token grant, so it is declared. This file went in
+# without it, on the strength of the install working — which it did, because the
+# repository's default workflow permissions happened to be read-write. That is an
+# organisation setting a person can change from a web form, and changing it would
+# have broken this pipeline with a 403 nobody would have connected to it. The
+# audit.yml beside this file has always declared its permissions; the two
+# workflows in one repository disagreeing about what they need is the drift.
+#
+# If the install still 403s with this in place, the cause is the token rather
+# than the grant: the default GITHUB_TOKEN reads packages from another
+# repository only when that package grants this one access. A PAT in a secret is
+# the fallback.
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  verify:
+    name: Typecheck, lint, guards, build
+    runs-on: ubuntu-latest
+    steps:
+      # Every third-party action is pinned to a commit, with the release it
+      # belongs to beside it for reading. A tag can be moved to other code by
+      # whoever holds the action's repository; a commit cannot, so a compromised
+      # release of an action does not reach this workflow through the pin. Bump
+      # by resolving the new tag to its commit, not by editing the comment.
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+
+      # No `version:` here. The action reads packageManager from package.json, so
+      # the pnpm version is pinned in one place rather than in every workflow
+      # that installs it. It used to be a literal 10, because this repository
+      # declared no packageManager field and floated across the 10.x line while
+      # its two siblings were pinned to the 10.5.0 that wrote the lockfile.
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5.0.0
+
+      # node-version-file rather than a literal, so .nvmrc and engines.node stay
+      # the single statement of which Node this repository runs on — and so the
+      # two workflows here cannot drift apart from each other.
+      #
+      # registry-url AND scope, together. Neither alone is right:
+      #
+      #   registry-url on its own writes a bare `registry=` into the runner's
+      #   .npmrc, making GitHub Packages the default for EVERY package. It does
+      #   not proxy npmjs, so next, react and tailwind would stop resolving.
+      #
+      #   Leaving both off does not work either, which is what the first version
+      #   of this file assumed. pnpm REFUSES to expand ${NODE_AUTH_TOKEN} from a
+      #   project .npmrc — that file is committed, so expanding it there could
+      #   leak the token to an attacker-controlled registry. The credential in
+      #   this repository's own .npmrc is therefore ignored, with a warning, and
+      #   the install fails on auth once the package it needs is private.
+      #
+      # With scope, setup-node writes `@ekdotico:registry=…` plus the auth line
+      # to the runner's own .npmrc, which pnpm does expand. The default registry
+      # is untouched. This is the pattern the docs repository already uses, and
+      # its CI has been installing this package green with it.
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+          registry-url: https://npm.pkg.github.com
+          scope: '@ekdotico'
+
+      - run: pnpm install --frozen-lockfile
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Types
+        run: pnpm typecheck
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Tests
+        run: pnpm test
+
+      # Every guard @ekdotico/domico ships for a consumer, in one step, so that
+      # the set of gates this site is held to is decided in the package rather
+      # than restated in three workflows that were already three different
+      # subsets of it. `discipline` is the one that caught this site's real
+      # drift — 44 var(--token, literal) fallbacks, seven silently diverged from
+      # the token they shadowed. `a11y` and `styles` had never run here at all;
+      # both pass today, which is the only moment adding a gate costs nothing.
+      #
+      # `pnpm check` is the bare `ekdotico-check`, and it names no guards. From
+      # 0.18.0 the no-argument set is derived from the package's own guard table
+      # rather than hand-written, so a guard added there arms itself here on the
+      # pin bump alone, with no edit to this file. That is the point of running
+      # it this way and the reason not to "clarify" it back into a list: a list
+      # is a second place to remember, and it is the one that gets forgotten.
+      #
+      # It ran as `ekdotico-check discipline a11y styles && ekdotico-lint` while
+      # the pin was 0.17.0, whose no-argument form ran contrast, styles and
+      # appearance and neither guard written for consumers. Naming them was what
+      # kept the step honest against the version installed. Do not restore that
+      # form: against 0.18.0 it would pin this site to the five guards that
+      # existed on the day it was written.
+      - name: Design-system guards and copy
+        run: pnpm run check
+
+      # No env. Every process.env read on this site sits inside a function with
+      # a fallback, so a build with no secrets present is a valid build.
+      - name: Build
+        run: pnpm build

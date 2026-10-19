@@ -1,0 +1,44 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# next
+/.next
+/out
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+.pnpm-debug.log*
+
+# env
+.env
+.env.local
+.env.*.local
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# editor
+.vscode/
+.idea/
+.env*.local
+
+# agent hooks installed from @ekdotico/domico by postinstall — a build output,
+# not a source. Change the hook in that package and release; a copy committed
+# here is a hand-maintained twin of a file the installer owns. A hook that is
+# genuinely local to this repository is exempted by name, the way docs and
+# praktico exempt their design-system reminder.
+/.claude/hooks/*
