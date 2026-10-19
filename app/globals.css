@@ -291,12 +291,20 @@
 /* Waitlist — the form in the hero and in the closing section. The field, the
    button and the status are the package's TextField, Button and FormFault; only
    their arrangement is stated here. The row stacks in the narrow-viewport block
-   below. */
+   below.
+
+   The width is the package's --form-w, the measure it sets for a single-column
+   form: an address field the width of the prose above it read as a search bar.
+   Centred under the hero's centred text; flush left in the closing section,
+   under its left-aligned heading. */
 .waitlist {
   width: 100%;
-  max-width: var(--measure);
+  max-width: var(--form-w);
   margin: clamp(var(--sp-5), 3vh, var(--sp-7)) auto 0;
   text-align: left;
+}
+.section .waitlist {
+  margin-left: 0;
 }
 .waitlist-row {
   display: flex;
