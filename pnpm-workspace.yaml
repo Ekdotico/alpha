@@ -1,3 +1,15 @@
+# pnpm 10 auto-installs a missing peer even when the package marks it optional.
+# @ekdotico/amyntico declares @clerk/backend as an optional peer that only its
+# auth module reads, and this site takes the headers and validation modules
+# alone, so the SDK and its tree must not be installed here. Off, and unmet
+# peers warn instead; the lockfile header must read `autoInstallPeers: false`.
+#
+# Stated here and not in .npmrc, as deree has it: pnpm discards the whole
+# .npmrc when ${NODE_AUTH_TOKEN} cannot be expanded, and this setting went with
+# it, which failed a Vercel build with ERR_PNPM_LOCKFILE_CONFIG_MISMATCH instead
+# of naming the missing token. The workspace file is read either way.
+autoInstallPeers: false
+
 ignoredBuiltDependencies:
   - sharp
   - unrs-resolver
