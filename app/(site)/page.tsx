@@ -1,10 +1,10 @@
-import { Hero } from '@/components/icai/Hero';
-import { PlatformSection } from '@/components/icai/PlatformSection';
-import { ProvenanceSection } from '@/components/icai/ProvenanceSection';
-import { VerificationSection } from '@/components/icai/VerificationSection';
-import { TeamSection } from '@/components/icai/TeamSection';
-import { WaitlistSection } from '@/components/icai/WaitlistSection';
-import { SiteFooter } from '@/components/icai/SiteFooter';
+import { Hero } from '@/components/alpha/Hero';
+import { PlatformSection } from '@/components/alpha/PlatformSection';
+import { ProvenanceSection } from '@/components/alpha/ProvenanceSection';
+import { VerificationSection } from '@/components/alpha/VerificationSection';
+import { TeamSection } from '@/components/alpha/TeamSection';
+import { WaitlistSection } from '@/components/alpha/WaitlistSection';
+import { SiteFooter } from '@/components/alpha/SiteFooter';
 import { metadataForHome } from '@/lib/seo';
 
 export const metadata = metadataForHome();

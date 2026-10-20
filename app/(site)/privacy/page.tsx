@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { SiteFooter } from '@/components/icai/SiteFooter';
+import { SiteFooter } from '@/components/alpha/SiteFooter';
 import { SITE_META } from '@/lib/site';
 
 export const metadata: Metadata = {

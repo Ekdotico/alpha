@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { SiteFooter } from '@/components/icai/SiteFooter';
+import { SiteFooter } from '@/components/alpha/SiteFooter';
 
 export const metadata: Metadata = {
   title: 'Address confirmed',

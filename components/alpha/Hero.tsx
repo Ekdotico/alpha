@@ -1,5 +1,5 @@
 import { LogoMark } from '@/components/Logo';
-import { WaitlistForm } from '@/components/icai/WaitlistForm';
+import { WaitlistForm } from '@/components/alpha/WaitlistForm';
 
 export function Hero() {
   return (

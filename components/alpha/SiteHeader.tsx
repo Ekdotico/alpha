@@ -1,6 +1,6 @@
 import { AppearanceMenu } from '@ekdotico/domico/theme';
 
-import { HeaderLogo } from '@/components/icai/HeaderLogo';
+import { HeaderLogo } from '@/components/alpha/HeaderLogo';
 import { SITE_META } from '@/lib/site';
 
 /*

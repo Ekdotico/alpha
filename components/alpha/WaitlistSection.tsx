@@ -1,4 +1,4 @@
-import { WaitlistForm } from '@/components/icai/WaitlistForm';
+import { WaitlistForm } from '@/components/alpha/WaitlistForm';
 
 // The closing call to action, above the footer: the same form as the hero, for
 // the reader who has read the page through before deciding.

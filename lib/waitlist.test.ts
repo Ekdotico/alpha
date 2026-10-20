@@ -49,7 +49,7 @@ describe('joinWaitlist', () => {
     expect(await joinWaitlist(form(valid), headers)).toEqual({ status: 'ok' });
     const brevo = JSON.parse(calls[1].body);
     expect(brevo).toMatchObject({ email: 'reader@example.org', includeListIds: [7], templateId: 3 });
-    expect(brevo.redirectionUrl).toBe('https://icai.ekdoti.co/confirmed');
+    expect(brevo.redirectionUrl).toBe('https://alpha.ekdoti.co/confirmed');
     expect(calls[0].body).toContain('remoteip=203.0.113.7');
   });
 

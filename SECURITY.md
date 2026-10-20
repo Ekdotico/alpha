@@ -1,13 +1,13 @@
 # Security policy
 
-`icai` is the public Ekdotico waitlist site at `icai.ekdoti.co`, deployed on
+`alpha` is the public Ekdotico waitlist site at `alpha.ekdoti.co`, deployed on
 Vercel. The repository is private. The site holds no accounts and no database
 of its own: waitlist addresses go to Brevo through double opt-in, and the only
 other state is short-lived rate-limit counters in Upstash.
 
 ## Reporting a vulnerability
 
-Email `stavros.apostolou@acg.edu` with `[security] icai` in the subject line.
+Email `stavros.apostolou@acg.edu` with `[security] alpha` in the subject line.
 
 Do not open an issue. An issue is visible to every collaborator and remains in
 the timeline after the fix. Include the route, the request, the response
@@ -47,5 +47,5 @@ is no bounty programme.
 
 ## Supported version
 
-The deployment at `icai.ekdoti.co`. `main` is the deployed branch and fixes ship
+The deployment at `alpha.ekdoti.co`. `main` is the deployed branch and fixes ship
 forward.

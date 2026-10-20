@@ -13,10 +13,10 @@
 
   "registers": {
     "lib/waitlist.ts": "system-feedback",
-    "components/icai/WaitlistForm.tsx": ["functional", "system-feedback"],
-    "components/icai/SiteHeader.tsx": "functional",
-    "components/icai/SiteFooter.tsx": "functional",
-    "components/icai/**": "marketing-awareness",
+    "components/alpha/WaitlistForm.tsx": ["functional", "system-feedback"],
+    "components/alpha/SiteHeader.tsx": "functional",
+    "components/alpha/SiteFooter.tsx": "functional",
+    "components/alpha/**": "marketing-awareness",
     "components/**": "functional",
 
     "app/(site)/page.tsx": "marketing-awareness",
@@ -33,7 +33,7 @@
       "reason": "The match is the CSS keyword in the next/font style array, style: ['normal', 'italic'], not a claim about a reader's writing. The rule's own text exempts CSS 'normal'; the exemption cannot see it here because it sits in a source file rather than in prose."
     },
     {
-      "files": "components/icai/VerificationSection.tsx",
+      "files": "components/alpha/VerificationSection.tsx",
       "rules": ["vocabulary/supervisor"],
       "reason": "\"A supervisor, a journal editor, or a reviewer\" enumerates who might retrieve a record. \"Supervisor\" is the canonical term used correctly; \"reviewer\" is the generic sense the vocabulary's own rationale records as confirmable rather than blocking. Carried from deree."
     }

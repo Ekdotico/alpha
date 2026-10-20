@@ -1,6 +1,6 @@
-# Ekdotico icai site — Agent Rules
+# Ekdotico alpha site — Agent Rules
 
-This file is loaded into every Claude Code session for the icai repo, the public Ekdotico waitlist site. It is a copy of `deree` without the passcode gate or the research area. Read it once, follow it always.
+This file is loaded into every Claude Code session for the alpha repo, the public Ekdotico waitlist site. It is a copy of `deree` without the passcode gate or the research area. Read it once, follow it always.
 
 ---
 
@@ -8,7 +8,7 @@ This file is loaded into every Claude Code session for the icai repo, the public
 
 ### Rule 1 — Components first
 
-Before writing any UI, check `components/icai/` for the landing-page sections. Use an existing section or extend it. Do not create one-off components inside `app/(site)/page.tsx`.
+Before writing any UI, check `components/alpha/` for the landing-page sections. Use an existing section or extend it. Do not create one-off components inside `app/(site)/page.tsx`.
 
 And check `@ekdotico/domico` before either. The waitlist form is the package's `TextField`, `Button` and `FormFault`, arranged by this site's `.waitlist-*` classes; `pnpm check:discipline` names a local copy of a package export as `dupes` and fails on it.
 
@@ -23,13 +23,13 @@ Colour, type, spacing, radius, shadow, and motion values must reference the desi
 If a request cannot be fulfilled with existing components or tokens:
 
 1. **Stop.** Do not write the change.
-2. **Identify** the closest existing primitive in `components/icai/` or `@ekdotico/domico`.
+2. **Identify** the closest existing primitive in `components/alpha/` or `@ekdotico/domico`.
 3. **Recommend exactly one** of three mitigations, with rationale: **extend** an existing component (preferred), **reimplement** the section using a different documented pattern, or **add** a new component or token to the system, with a one-paragraph proposal.
 4. **Wait for human approval** before proceeding.
 
 ### Rule 4 — The page is Ekdotico's, not ICAI's
 
-The repository and subdomain are named for the audience. The page never presents itself as the International Center for Academic Integrity, uses its name or marks, or implies an endorsement it has not given.
+The site began as `icai`, named for an audience that meets Ekdotico through the International Center for Academic Integrity, and moved to `alpha.ekdoti.co`; `icai.ekdoti.co` redirects there. That audience is still a large part of its readership. The page never presents itself as the International Center for Academic Integrity, uses its name or marks, or implies an endorsement it has not given.
 
 ---
 
@@ -68,7 +68,7 @@ This repository is proprietary: `LICENSE` reserves all rights and `package.json`
 | `app/(site)/page.tsx` | `/` — composes the sections in order, and owns the home-page metadata |
 | `app/(site)/actions.ts` | The waitlist server action |
 | `app/(site)/privacy/page.tsx` · `app/(site)/confirmed/page.tsx` | The privacy notice; the page Brevo redirects to after confirmation |
-| `components/icai/*` | Section components, one file per section, and `WaitlistForm` |
+| `components/alpha/*` | Section components, one file per section, and `WaitlistForm` |
 | `lib/waitlist.ts` | The signup pipeline: honeypot, validation, limits, Turnstile, Brevo double opt-in |
 | `lib/rate-limit.ts` | Upstash sliding-window limits: per client, per inbox (hashed), per day |
 | `lib/turnstile.ts` | Turnstile origin, script, action name, and site key |
