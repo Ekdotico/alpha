@@ -20,9 +20,18 @@ export default function PrivacyPage() {
           <h1 id="privacy-title" className="section-heading">How your address is kept</h1>
           <div className="section-body">
             <p>
-              The waitlist on this site collects one thing: the email address you enter. It is
-              used to tell you when Ekdotico opens, and for nothing else. It is not sold, shared
-              for advertising, or added to any other list.
+              The waitlist on this site collects the email address you enter, and whether you
+              ticked the box about user testing. The address is used to tell you when Ekdotico
+              opens. It is not sold, shared for advertising, or added to any list you did not
+              choose.
+            </p>
+            <p>
+              <em>User testing.</em> The box is optional and unticked unless you tick it. If you
+              do, your address also joins a separate testing list once you confirm it, and you
+              receive one email about what taking part involves. Ticking it does not sign you up
+              for a session: nothing is arranged without your agreement, and any session comes
+              with its own information about how what you share is handled. You can leave the
+              testing list without leaving the waitlist by writing to the address below.
             </p>
             <p>
               <em>Who holds it.</em> The Ekdotico team, reachable at{' '}
@@ -47,7 +56,8 @@ export default function PrivacyPage() {
             </p>
             <p>
               <em>How long.</em> Until you unsubscribe, or until the waitlist closes after launch,
-              whichever comes first. Every message carries an unsubscribe link.
+              whichever comes first; the testing list closes when testing ends, or with the
+              waitlist. Every message carries an unsubscribe link, which takes you off both.
             </p>
             <p>
               <em>What you can ask for.</em> A copy of what is held about you, its correction, or

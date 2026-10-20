@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useActionState, useEffect, useId, useRef, useState } from 'react';
-import { Button, FormFault, TextField } from '@ekdotico/domico/components';
+import { Button, Checkbox, FormFault, TextField } from '@ekdotico/domico/components';
 import { submitWaitlist, type WaitlistState } from '@/app/(site)/actions';
 import { TURNSTILE_ACTION, TURNSTILE_SCRIPT, turnstileSiteKey } from '@/lib/turnstile';
 
@@ -137,6 +137,17 @@ function WaitlistFields({
           Join the waitlist
         </Button>
       </div>
+
+      {/* Unticked by default: taking part in testing is a separate consent from
+          joining the list, and GDPR does not count a pre-ticked box as one. */}
+      <Checkbox
+        className="waitlist-testing"
+        name="testing"
+        value="yes"
+        label="I would also like to hear about taking part in user testing"
+        hint="Optional. Once you confirm your address, we send one email about what testing involves. Nothing is arranged without your agreement."
+        defaultChecked={state?.testing ?? false}
+      />
 
       {/* The honeypot: a field a person never sees or reaches. */}
       <div className="waitlist-trap" aria-hidden="true">

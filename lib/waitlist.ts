@@ -14,6 +14,9 @@ import { TURNSTILE_ACTION, TURNSTILE_ORIGIN } from '@/lib/turnstile';
 //   5. the address's and the day's send limits;
 //   6. Brevo's double opt-in, which stores the contact unconfirmed and sends
 //      the confirmation. The contact joins the list only once its owner clicks.
+//      A reader who ticked the testing box joins the testing list at the same
+//      moment, and a Brevo automation on that list sends the testing email, so
+//      an address nobody confirmed is never sent it.
 //
 // The reply never says whether an address was already on the list: a repeat
 // signup, a signup the address limit absorbed, and a new one all answer "check
@@ -88,7 +91,14 @@ export async function joinWaitlist(form: FormData, headers: Headers): Promise<Wa
   }
 
   // 6.
-  return requestDoubleOptIn(email);
+  return requestDoubleOptIn(email, form.get('testing') === 'yes');
+}
+
+// A Brevo ID from the environment, or null. Number('') is 0, which is an
+// integer, so a set-but-empty variable has to be refused explicitly.
+function brevoId(name: string): number | null {
+  const id = Number(process.env[name]);
+  return Number.isInteger(id) && id > 0 ? id : null;
 }
 
 async function verifyTurnstile(token: string, ip: string | null): Promise<boolean> {
@@ -113,14 +123,19 @@ async function verifyTurnstile(token: string, ip: string | null): Promise<boolea
   return outcome.success === true && (secret === TEST_SECRET || outcome.action === TURNSTILE_ACTION);
 }
 
-async function requestDoubleOptIn(email: string): Promise<WaitlistResult> {
+async function requestDoubleOptIn(email: string, testing: boolean): Promise<WaitlistResult> {
   const apiKey = process.env.BREVO_API_KEY;
-  const listId = Number(process.env.BREVO_LIST_ID);
-  const templateId = Number(process.env.BREVO_DOI_TEMPLATE_ID);
-  if (!apiKey || !Number.isInteger(listId) || !Number.isInteger(templateId)) {
+  const listId = brevoId('BREVO_LIST_ID');
+  const templateId = brevoId('BREVO_DOI_TEMPLATE_ID');
+  // Required only when the box is ticked, so the list can go live before the
+  // testing list exists. A ticked box with no list to put it in is a refusal,
+  // not a signup that quietly drops the reader's consent.
+  const testingListId = testing ? brevoId('BREVO_TESTING_LIST_ID') : null;
+  if (!apiKey || !listId || !templateId || (testing && !testingListId)) {
     if (isProduction()) {
       throw new ConfigError(
-        'BREVO_API_KEY, BREVO_LIST_ID and BREVO_DOI_TEMPLATE_ID must all be set; the IDs are integers.',
+        'BREVO_API_KEY, BREVO_LIST_ID and BREVO_DOI_TEMPLATE_ID must all be set, and ' +
+          'BREVO_TESTING_LIST_ID too when the testing box is ticked; the IDs are positive integers.',
       );
     }
     console.warn('[waitlist] Brevo is not configured; the signup was accepted and not sent.');
@@ -132,7 +147,9 @@ async function requestDoubleOptIn(email: string): Promise<WaitlistResult> {
     headers: { 'api-key': apiKey, 'content-type': 'application/json', accept: 'application/json' },
     body: JSON.stringify({
       email,
-      includeListIds: [listId],
+      // Brevo applies these lists only on confirmation, so the testing list's
+      // automation never reaches an unconfirmed address.
+      includeListIds: testingListId ? [listId, testingListId] : [listId],
       templateId,
       redirectionUrl: absoluteUrl('/confirmed'),
     }),

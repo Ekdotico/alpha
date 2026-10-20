@@ -53,6 +53,29 @@ describe('joinWaitlist', () => {
     expect(calls[0].body).toContain('remoteip=203.0.113.7');
   });
 
+  it('adds the testing list only when the box is ticked', async () => {
+    vi.stubEnv('BREVO_TESTING_LIST_ID', '9');
+    upstream({ success: true }, 201);
+    await joinWaitlist(form({ ...valid, testing: 'yes' }), headers);
+    expect(JSON.parse(calls[1].body).includeListIds).toEqual([7, 9]);
+    upstream({ success: true }, 201);
+    await joinWaitlist(form(valid), headers);
+    expect(JSON.parse(calls[1].body).includeListIds).toEqual([7]);
+  });
+
+  it('refuses a ticked box in production when there is no testing list to honour it', async () => {
+    vi.stubEnv('NODE_ENV', 'production');
+    vi.stubEnv('TURNSTILE_SECRET_KEY', 'real-secret');
+    const limits = await import('./rate-limit');
+    vi.spyOn(limits, 'consumeClient').mockResolvedValue({ allowed: true, scope: 'client' });
+    vi.spyOn(limits, 'consumeSend').mockResolvedValue({ allowed: true, scope: 'address' });
+    upstream({ success: true, action: 'waitlist' }, 201);
+    await expect(joinWaitlist(form({ ...valid, testing: 'yes' }), headers)).rejects.toThrow(
+      'BREVO_TESTING_LIST_ID',
+    );
+    expect(calls.some((c) => c.url.includes('brevo'))).toBe(false);
+  });
+
   it('answers an address already on the list exactly as a new one', async () => {
     upstream({ success: true }, 204);
     expect(await joinWaitlist(form(valid), headers)).toEqual({ status: 'ok' });

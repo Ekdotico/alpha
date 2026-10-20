@@ -3,8 +3,8 @@
 import { headers } from 'next/headers';
 import { joinWaitlist, serviceFailure, type WaitlistResult } from '@/lib/waitlist';
 
-/** What the form renders from: the result, and the address to put back. */
-export type WaitlistState = WaitlistResult & { email?: string };
+/** What the form renders from: the result, and the input to put back. */
+export type WaitlistState = WaitlistResult & { email?: string; testing?: boolean };
 
 // The waitlist form's server action. A server action, rather than a route
 // handler, for two reasons: the form posts and gets its answer without
@@ -24,7 +24,12 @@ export async function submitWaitlist(
   }
   if (result.status === 'ok') return result;
   // The reader's own input, handed back so a refused address can be corrected
-  // rather than retyped. Capped at the field's own maxLength.
+  // rather than retyped, and the testing box keeps the choice they made.
+  // Capped at the field's own maxLength.
   const email = form.get('email');
-  return { ...result, email: typeof email === 'string' ? email.slice(0, 254) : undefined };
+  return {
+    ...result,
+    email: typeof email === 'string' ? email.slice(0, 254) : undefined,
+    testing: form.get('testing') === 'yes',
+  };
 }
