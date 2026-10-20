@@ -1,10 +1,11 @@
 import { AppearanceMenu } from '@ekdotico/domico/theme';
 
-import { Logo } from '@/components/Logo';
+import { HeaderLogo } from '@/components/icai/HeaderLogo';
 import { SITE_META } from '@/lib/site';
 
 /*
- * Sticky site header. Four pieces: wordmark (Logo), domain label, status badge,
+ * Sticky site header. Four pieces: wordmark (HeaderLogo, which links home off
+ * the homepage), domain label, status badge,
  * and the appearance control at the far right.
  *
  * The appearance control is one trigger disclosing the whole optionset, in the
@@ -25,7 +26,7 @@ export function SiteHeader() {
   return (
     <header className="site-header" role="banner">
       <div className="site-header-inner">
-        <Logo />
+        <HeaderLogo />
         {/* From SITE_META, not a literal. lib/site.ts calls `domain` "the brand
             string the header and footer print" — the footer reads it and the
             header did not, so one of the two would have kept printing the old
