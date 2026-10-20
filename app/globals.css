@@ -93,6 +93,14 @@
   gap: var(--sp-4);
   padding: var(--sp-3) var(--sp-4);
 }
+/* The lockup as a link home, off the homepage. It keeps the lockup's look: no
+   underline, and the colour the lockup sets itself. The focus ring is the
+   document's. */
+.site-header-home {
+  display: inline-flex;
+  color: inherit;
+  text-decoration: none;
+}
 .site-header-domain {
   font-family: var(--font-mono);
   font-size: var(--fs-xs);
