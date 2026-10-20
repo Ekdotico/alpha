@@ -327,6 +327,11 @@
 }
 /* Turnstile renders its own iframe into this box. The min-height reserves the
    widget's row so the note below does not jump when it arrives. */
+/* A step more than the gaps below it, so the optional box reads as its own
+   choice rather than a caption under the address field. */
+.waitlist-testing {
+  margin-top: var(--sp-4);
+}
 .waitlist-check {
   margin-top: var(--sp-3);
   min-height: var(--sp-8);
