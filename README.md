@@ -1,6 +1,6 @@
-# icai — Ekdotico waitlist site
+# alpha — Ekdotico waitlist site
 
-The public Ekdotico landing page at `https://icai.ekdoti.co`, for readers who meet Ekdotico through the academic-integrity community. A copy of `deree` without the passcode gate or the research area: a few sections describing Ekdotico, and a waitlist form in the hero and above the footer. The page presents itself as Ekdotico, never as the International Center for Academic Integrity.
+The public Ekdotico landing page at `https://alpha.ekdoti.co`, for readers who meet Ekdotico through the academic-integrity community. A copy of `deree` without the passcode gate or the research area: a few sections describing Ekdotico, and a waitlist form in the hero and above the footer. The page presents itself as Ekdotico, never as the International Center for Academic Integrity.
 
 ## Stack
 
@@ -19,7 +19,7 @@ No configuration is needed locally: with the variables in `.env.example` blank, 
 
 ## How a signup works
 
-`components/icai/WaitlistForm.tsx` posts to the server action in `app/(site)/actions.ts`, which calls `joinWaitlist` in `lib/waitlist.ts`:
+`components/alpha/WaitlistForm.tsx` posts to the server action in `app/(site)/actions.ts`, which calls `joinWaitlist` in `lib/waitlist.ts`:
 
 1. **Honeypot.** A hidden `website` field; a filled one is answered as a success and nothing is sent.
 2. **Validation.** The address is trimmed, lower-cased, length-capped at 254, and parsed with `@ekdotico/amyntico/validation`.
@@ -36,15 +36,15 @@ Brevo (France) stores the list in the EU. The Vercel functions run in Frankfurt 
 
 ## Deploying
 
-Vercel project `icai` in the team that holds `deree` and `docs`. Before the first production deploy:
+Vercel project `alpha` in the team that holds `deree` and `docs`. Before the first production deploy:
 
 1. **Brevo:** create a contact list and a Double opt-in template whose button links to `{{ doubleoptin }}`; authenticate the sending domain; create an API key (API Keys tab, `xkeysib-`, not SMTP). Add an `optin` tag to the template and activate it. Create a second list, "User testing", and an automation: contact added to that list, send the testing email. Set `BREVO_API_KEY`, `BREVO_LIST_ID`, `BREVO_DOI_TEMPLATE_ID`, `BREVO_TESTING_LIST_ID`.
-2. **Turnstile:** add a widget for `icai.ekdoti.co` only, Managed mode (local development uses the test keys). Keep the DNS record DNS-only, not proxied, or every reader is counted under Cloudflare's IPs. Set `NEXT_PUBLIC_TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY`.
+2. **Turnstile:** add a widget for `alpha.ekdoti.co` only, Managed mode (local development uses the test keys). Keep the DNS record DNS-only, not proxied, or every reader is counted under Cloudflare's IPs. Set `NEXT_PUBLIC_TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY`.
 3. **Upstash:** Vercel Marketplace, Upstash Redis, region `eu-central-1`; it injects `KV_REST_API_URL` / `KV_REST_API_TOKEN`.
 4. **Registry:** `NODE_AUTH_TOKEN` (a token with `read:packages`) so Vercel's install can fetch `@ekdotico/*` from GitHub Packages; and grant this repository Actions access on both packages for CI.
-5. **Domain:** `icai.ekdoti.co` is attached to the project, and its DNS already points at Vercel (`vercel domains verify icai.ekdoti.co` reports it configured).
+5. **Domain:** `alpha.ekdoti.co` is attached to the project, and its DNS points at Vercel (`vercel domains verify alpha.ekdoti.co` reports it configured). `icai.ekdoti.co`, the site's first address, stays attached as a permanent (308) redirect to `alpha.ekdoti.co`: confirmation emails sent before the move link to `icai.ekdoti.co/confirmed`, and those links must keep landing.
 
-`vercel deploy` for a preview; `vercel deploy --prod` ships to `icai.ekdoti.co`.
+`vercel deploy` for a preview; `vercel deploy --prod` ships to `alpha.ekdoti.co`.
 
 ## Licence
 

@@ -1,4 +1,4 @@
-// Single source of truth for site-wide metadata for the icai waitlist site.
+// Single source of truth for site-wide metadata for the alpha waitlist site.
 // Adapted from deree: no gate, so the site is public and indexable.
 
 export const SITE_META = {
@@ -7,7 +7,7 @@ export const SITE_META = {
   verification: 'verify.ekdoti.co',
   // The host that serves this site. It feeds `metadataBase`,
   // `alternates.canonical`, `openGraph.url` and the OG image URL.
-  siteUrl: 'https://icai.ekdoti.co',
+  siteUrl: 'https://alpha.ekdoti.co',
   siteName: 'Ekdotico',
   // No trailing full stop: lib/seo.ts interpolates this into
   // `${siteName} · ${tagline}` to build the document <title>.

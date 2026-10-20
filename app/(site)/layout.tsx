@@ -1,4 +1,4 @@
-import { SiteHeader } from '@/components/icai/SiteHeader';
+import { SiteHeader } from '@/components/alpha/SiteHeader';
 import { OpeningSequence, SkipLink } from '@ekdotico/domico/components';
 
 // Marketing-site chrome lives here, not in the root layout. The skip link
