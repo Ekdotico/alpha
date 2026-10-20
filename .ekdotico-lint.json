@@ -1,0 +1,41 @@
+{
+  "files": ["app/**/*.tsx", "app/**/*.ts", "components/**/*.tsx", "lib/**/*.ts"],
+
+  "ignore": [
+    "app/robots.ts",
+    "components/icons/LinkedInIcon.tsx",
+    "lib/rate-limit.ts",
+    "lib/seo.ts",
+    "lib/turnstile.ts"
+  ],
+
+  "failOn": "blocking",
+
+  "registers": {
+    "lib/waitlist.ts": "system-feedback",
+    "components/icai/WaitlistForm.tsx": ["functional", "system-feedback"],
+    "components/icai/SiteHeader.tsx": "functional",
+    "components/icai/SiteFooter.tsx": "functional",
+    "components/icai/**": "marketing-awareness",
+    "components/**": "functional",
+
+    "app/(site)/page.tsx": "marketing-awareness",
+    "app/(site)/privacy/page.tsx": "instructional",
+    "app/(site)/confirmed/page.tsx": "system-feedback",
+    "lib/site.ts": ["functional", "marketing-awareness"],
+    "app/**": "instructional"
+  },
+
+  "overrides": [
+    {
+      "files": "app/layout.tsx",
+      "rules": ["normal-baseline"],
+      "reason": "The match is the CSS keyword in the next/font style array, style: ['normal', 'italic'], not a claim about a reader's writing. The rule's own text exempts CSS 'normal'; the exemption cannot see it here because it sits in a source file rather than in prose."
+    },
+    {
+      "files": "components/icai/VerificationSection.tsx",
+      "rules": ["vocabulary/supervisor"],
+      "reason": "\"A supervisor, a journal editor, or a reviewer\" enumerates who might retrieve a record. \"Supervisor\" is the canonical term used correctly; \"reviewer\" is the generic sense the vocabulary's own rationale records as confirmable rather than blocking. Carried from deree."
+    }
+  ]
+}

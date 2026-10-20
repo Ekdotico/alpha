@@ -1,0 +1,43 @@
+{
+  "name": "icai",
+  "version": "0.1.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "packageManager": "pnpm@10.33.2",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "lint:copy": "ekdotico-lint",
+    "check:discipline": "ekdotico-check discipline",
+    "check": "ekdotico-check",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "postinstall": "test ! -f node_modules/@ekdotico/domico/scripts/install-agent-hooks.mjs || node node_modules/@ekdotico/domico/scripts/install-agent-hooks.mjs",
+    "hooks:check": "node node_modules/@ekdotico/domico/scripts/install-agent-hooks.mjs --check"
+  },
+  "dependencies": {
+    "@ekdotico/amyntico": "0.8.0",
+    "@ekdotico/domico": "0.28.0",
+    "@upstash/ratelimit": "2.0.8",
+    "@upstash/redis": "1.38.4",
+    "next": "16.3.4",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "server-only": "0.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "24.13.3",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.7",
+    "eslint": "9.39.5",
+    "eslint-config-next": "16.3.4",
+    "typescript": "6.0.3",
+    "vite": "8.2.1",
+    "vitest": "5.0.0"
+  }
+}

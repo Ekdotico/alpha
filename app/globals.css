@@ -1,0 +1,381 @@
+/* The shared base layer and the shared components, pulled in here rather than
+   from app/layout.tsx. Both positions reach the same stylesheet, but only this
+   one fixes the order: an @import is hoisted into the chunk the build links
+   immediately BEFORE this file's rules, so the package can never land on the
+   winning side of a specificity tie against the rules below.
+
+   A layout-level import is not guaranteed to do that. Read out of the <link>
+   and chunk order of a running production build: under Turbopack the three
+   imports in app/layout.tsx were merged into one stylesheet in import order, so
+   the package happened to precede this file; under webpack, docs measured the
+   package emitted as a separate chunk linked AFTER the application's, which is
+   the losing side. Nothing on this site overrides a package class today, so the
+   difference was latent rather than visible — the @import is what stops it
+   arming itself the first time one does.
+
+   tokens.css stays in app/layout.tsx. It declares custom properties and no
+   rules that could tie, so its position in the cascade does not matter, and
+   docs keeps it there too. */
+@import '@ekdotico/domico/styles.css';
+
+/* ============================================================
+   EKDOTICO — ICAI WAITLIST SITE
+   layout, chrome, and the marketing component layer
+   ============================================================ */
+
+/* Colour, type, spacing, radius, shadow and motion tokens are NOT defined here.
+   They come from @ekdotico/domico/tokens.css, imported in app/layout.tsx, and
+   carry all four themes across both modes. Adding a token to this file forks
+   the design system; add it to the package instead.
+
+   Reference the token, never the value: `var(--fs-md)`, never
+   `var(--fs-md, 1rem)`. A fallback that restates a token is a second source of
+   truth with nothing keeping it honest, and seven of the forty-four this file
+   used to carry had diverged from the token they named — --radius-sm was 4px
+   against a fallback claiming 6px, --sp-12 128px against 4rem, --fs-2xl
+   1.875rem against 1.5rem.
+
+   None of the seven was rendering, which is the point rather than the
+   consolation: `var()` reaches its fallback only when the custom property is
+   unset, and tokens.css sets all of them, so the wrong values sat in this file
+   for as long as they liked without a single pixel moving to give them away.
+   That is what a fallback costs — not a wrong render, a comment that lies about
+   the design system and is read as documentation.
+
+   Fonts are self-hosted and optimised via next/font (see app/layout.tsx), which
+   defines --font-crimson-pro / --font-commissioner / --font-fira-code for the
+   package's --font-serif / --font-sans / --font-mono to consume. */
+
+:root {
+  /* Chrome geometry is this site's own: the marketing header exists nowhere
+     else, and the hero's min-height subtracts it. Composed from the scale rather
+     than stated in rem, so its terms come from one place. */
+  /* --sp-8 is a ceiling on the header's content row, not a measurement of it.
+     The tallest item in the row is now the 36px appearance trigger rather than
+     the 22px logo, which measures the header at 61px against the 65px this
+     states. The overshoot is deliberate and the direction is the safe one: the
+     hero's min-height subtracts this sum, so over-stating it makes the first
+     screen 4px shorter than the viewport rather than 4px taller than it. There
+     is no 36px step on the spacing scale to state exactly, and inventing one
+     for a single control's height would fork the scale to buy back 4px. */
+  --site-header-h: calc(var(--sp-3) * 2 + var(--sp-8) + 1px); /* 2×padding + content row ceiling + border */
+  --chrome-h: var(--site-header-h);
+}
+
+/* ============================================================
+   RESET & BASE
+   ----------------------------------------------------------------
+   The reset, the document defaults, ::selection, the focus ring, the
+   accessibility primitives, the scrollbars, the element-level
+   normalisation, the wrapping rules, and the semantic type utilities
+   all come from @ekdotico/domico/styles.css, @imported at the top of
+   this file. Only what the base layer does not state belongs here —
+   which, at the document level, is now nothing: the two text-wrap
+   rules this file used to hold were absorbed into the package in
+   0.7.0, because they were correct for all three applications.
+   ============================================================ */
+
+/* ============================================================
+   Marketing — Site header
+   ============================================================ */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--bg-canvas);
+  border-bottom: 1px solid var(--rule-soft);
+}
+.site-header-inner {
+  max-width: var(--content-w);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  padding: var(--sp-3) var(--sp-4);
+}
+.site-header-domain {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--fg-3);
+  margin-left: auto;
+}
+/* The appearance control. Only its place in the row is stated here; the trigger,
+   the panel, and the panel's anchoring are all styled by
+   @ekdotico/domico/styles/appearance.css, so this control reads and behaves
+   identically to the ones in docs and praktico.
+
+   flex: none because the trigger is a fixed 36px square and the row is a flex
+   container: left to shrink, the wrapper would narrow under the button and the
+   button would spill past the header's right padding on a narrow phone.
+
+   Nothing here needs a z-index. The panel carries its own, and .site-header is
+   the nearest stacking context — position: sticky with z-index: 10 — so the
+   whole header, panel included, paints above the preview banner and the page.
+   The banner is also the wrong direction to worry about: it sits above the
+   header in the document and the panel opens downwards. */
+.site-header-appearance {
+  flex: none;
+}
+.site-header-badge {
+  font-family: var(--font-sans);
+  font-size: var(--fs-xs);
+  /* 0.12em is --tr-label, which the package has stated all along and which
+     .kv-key sets every label with. An earlier note here claimed no token stated
+     it and moved the badge to --tr-widest to match the surrounding uppercase;
+     both halves of that are now wrong. Rule 17 removed the uppercase, and
+     --tr-widest is the tracking that made capitals legible, not the tracking a
+     sentence-case label wants. */
+  letter-spacing: var(--tr-label);
+  color: var(--accent);
+  border: 1px solid var(--accent-soft);
+  border-radius: var(--radius-sm);
+  padding: 2px var(--sp-2);
+}
+
+/* ============================================================
+   Marketing — Site footer
+   ============================================================ */
+.site-footer {
+  border-top: 1px solid var(--rule-soft);
+  margin-top: var(--sp-12);
+}
+.site-footer-inner {
+  max-width: var(--content-w);
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  padding: var(--sp-6) var(--sp-4);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--fg-3);
+}
+
+/* .site-footer-appearance was here: a --content-w column under the footer text,
+   separated by a hairline, holding the flat pair of appearance controls. The
+   pair moved to one trigger in the top right of the header, where the other two
+   Ekdotico surfaces keep theirs, and AppearanceMenu positions its own panel — so
+   this site now states placement in one declaration on .site-header-appearance
+   instead of a block. */
+
+/* ============================================================
+   Marketing — Section rhythm
+   ============================================================ */
+.section {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: var(--sp-12) var(--sp-4) var(--sp-10);
+}
+.section-eyebrow {
+  font-family: var(--font-sans);
+  font-size: var(--fs-xs);
+  letter-spacing: var(--tr-label);
+  color: var(--fg-3);
+  margin: 0 0 var(--sp-2) 0;
+}
+.section-heading {
+  font-family: var(--font-serif);
+  font-weight: var(--fw-regular);
+  font-size: var(--fs-2xl);
+  line-height: var(--lh-tight);
+  color: var(--fg-1);
+  margin: 0 0 var(--sp-4) 0;
+}
+.section-body p {
+  font-family: var(--font-serif);
+  font-size: var(--fs-md);
+  line-height: var(--lh-prose);
+  color: var(--fg-2);
+  margin: 0 0 var(--sp-3) 0;
+}
+/* .section-rule-gilt was here: a 40px gilt hairline, centred, that no element on
+   this site ever carried. It was a hand-rolled half of the package's
+   SectionRule, which draws the same gilt lead and then a full-width --rule
+   hairline. Nothing referenced the class, so nothing moves by removing it. If
+   this site ever wants a section break it should render <SectionRule /> from
+   @ekdotico/domico/components rather than redraw one. */
+
+/* Hero */
+.hero {
+  width: 100%;
+  min-height: calc(100dvh - var(--chrome-h));
+  padding: clamp(var(--sp-6), 4vh, var(--sp-9)) 0;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+.hero-body {
+  width: min(var(--content-w), 90vw);
+  padding: 0 var(--sp-4);
+  flex-shrink: 0;
+}
+.hero-logo {
+  display: block;
+  margin: 0 auto clamp(var(--sp-4), 3vh, var(--sp-7)) auto;
+}
+/* The two hero ramps are fluid rather than a step off the --fs-* scale, which
+   is legitimate for a display heading on a single marketing page: the title has
+   to hold a full sentence at 375px and at 1600px without a breakpoint. What is
+   not legitimate is inventing the endpoints, so both ends of each clamp come
+   from the scale and only the viewport slope is a literal. The title floors at
+   the section-heading size and the lede floors at the body size, which is the
+   relationship the rest of the page already states. */
+.hero-title {
+  font-family: var(--font-serif);
+  font-weight: var(--fw-regular);
+  font-size: clamp(var(--fs-2xl), 2.4vw + 0.9rem, var(--fs-5xl));
+  line-height: var(--lh-tight);
+  color: var(--fg-1);
+  margin: 0 0 clamp(var(--sp-3), 2vh, var(--sp-6)) 0;
+}
+.hero-lede {
+  font-family: var(--font-serif);
+  font-size: clamp(var(--fs-md), 1vw + 0.75rem, var(--fs-lg));
+  line-height: var(--lh-prose);
+  color: var(--fg-2);
+  margin: 0 auto;
+  max-width: var(--measure);
+}
+
+/* Verify endpoint block */
+.verify-endpoint {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--fs-md);
+  color: var(--fg-1);
+  background: var(--bg-surface);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--radius-md);
+  padding: var(--sp-3) var(--sp-4);
+  margin: var(--sp-4) 0;
+  text-align: center;
+}
+
+/* Team list — two-column name/affiliation */
+.team-list {
+  list-style: none;
+  padding: 0;
+  margin: var(--sp-4) 0 0 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-3) var(--sp-4);
+  font-family: var(--font-serif);
+}
+.team-list dt {
+  font-weight: var(--fw-medium);
+  color: var(--fg-1);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+.team-social {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  min-height: 24px;
+  color: var(--fg-1);
+  transition: color var(--dur-fast) var(--ease-soft);
+}
+.team-social:hover {
+  color: var(--accent);
+}
+.team-list dd {
+  margin: 0;
+  color: var(--fg-3);
+  font-style: italic;
+}
+
+/* Waitlist — the form in the hero and in the closing section. The field, the
+   button and the status are the package's TextField, Button and FormFault; only
+   their arrangement is stated here. The row stacks in the narrow-viewport block
+   below.
+
+   The width is the package's --form-w, the measure it sets for a single-column
+   form: an address field the width of the prose above it read as a search bar.
+   Centred under the hero's centred text; flush left in the closing section,
+   under its left-aligned heading. */
+.waitlist {
+  width: 100%;
+  max-width: var(--form-w);
+  margin: clamp(var(--sp-5), 3vh, var(--sp-7)) auto 0;
+  text-align: left;
+}
+.section .waitlist {
+  margin-left: 0;
+}
+.waitlist-row {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--sp-3);
+}
+.waitlist-row .ekd-field {
+  flex: 1;
+  min-width: 0;
+}
+/* The honeypot. Off-screen rather than display: none, which some bots read as
+   a cue to leave the field empty; kept out of the tab order and the
+   accessibility tree by the attributes on the element itself. */
+.waitlist-trap {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+/* Turnstile renders its own iframe into this box. The min-height reserves the
+   widget's row so the note below does not jump when it arrives. */
+.waitlist-check {
+  margin-top: var(--sp-3);
+  min-height: var(--sp-8);
+}
+.waitlist-note {
+  font-family: var(--font-sans);
+  font-size: var(--fs-xs);
+  line-height: var(--lh-prose);
+  color: var(--fg-3);
+  margin: var(--sp-3) 0 0;
+}
+.waitlist-note a {
+  color: inherit;
+}
+.waitlist .ekd-fault {
+  margin-top: var(--sp-3);
+}
+
+/* ============================================================
+   Marketing — Hardening: narrow-viewport stacks
+   ----------------------------------------------------------------
+   The keyboard skip link is the package's SkipLink, rendered in
+   app/(site)/layout.tsx and styled by the base layer's .skip-link.
+   ============================================================ */
+
+/* Stack the two-up name/affiliation grid so long affiliations do not crush
+   on narrow phones. */
+@media (max-width: 520px) {
+  .team-list { grid-template-columns: 1fr; }
+
+  /* Field above button: side by side, the address would get a third of a
+     phone's width. */
+  .waitlist-row { flex-direction: column; align-items: stretch; }
+
+  /* Drop the domain label from the header row on phones. The appearance trigger
+     is a fixed 36px and does not shrink, so at 375px the row measured flush to
+     the viewport and the badge — the one item in it that can shrink — wrapped
+     "Pre-launch" onto a second line, taking the header from 61px to 67px.
+
+     The domain is what goes, because it is the one thing in the row that is
+     said twice already: the wordmark beside it reads "Ekdotico" and the address
+     bar above it reads the domain. Nothing is lost at this width that the
+     reader cannot see without it. */
+  .site-header-domain { display: none; }
+
+  /* The auto margin that right-aligns the tail of the row lives on the domain,
+     and display: none takes an element out of layout margins and all — so
+     hiding it alone left the badge and the trigger sitting against the logo,
+     with the trigger 85px short of the right edge. The badge is the first item
+     of the tail at this width, so it inherits the job. */
+  .site-header-badge { margin-left: auto; }
+}

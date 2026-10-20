@@ -26,7 +26,7 @@ No configuration is needed locally: with the variables in `.env.example` blank, 
 3. **Per-client limit.** Five signups per IP (an IPv6 client by its /64) in ten minutes and ten in a day, in `lib/rate-limit.ts`. A missing token is refused before this, so it costs the reader no try.
 4. **Turnstile.** The token is verified server-side with `siteverify`, including the `waitlist` action it was signed for.
 5. **Send limits.** Three confirmation emails per inbox per day (keyed by a SHA-256 of the inbox, with `+tags` and Gmail dots folded, so no address is stored in Redis), and 250 a day overall, under Brevo's free 300 a day.
-6. **Brevo double opt-in.** The contact is stored unconfirmed and Brevo sends the confirmation template; the address joins the list only when its owner clicks, and Brevo then redirects to `/confirmed`.
+6. **Brevo double opt-in.** The contact is stored unconfirmed and Brevo sends the confirmation template; the address joins the list only when its owner clicks, and Brevo then redirects to `/confirmed`. A reader who ticked the optional testing box joins the "User testing" list at the same moment, and a Brevo automation on that list sends the testing email, so an unconfirmed address never receives it.
 
 The answer never reveals whether an address was already on the list. Every step fails closed in production: a missing variable, a Turnstile or Upstash timeout, or an unexpected Brevo response refuses the signup and logs why, without logging the address. The form also works without JavaScript up to the Turnstile check, which needs it.
 
@@ -38,7 +38,7 @@ Brevo (France) stores the list in the EU. The Vercel functions run in Frankfurt 
 
 Vercel project `icai` in the team that holds `deree` and `docs`. Before the first production deploy:
 
-1. **Brevo:** create a contact list and a Double opt-in template whose button links to `{{ doubleoptin }}`; authenticate the sending domain; create an API key. Set `BREVO_API_KEY`, `BREVO_LIST_ID`, `BREVO_DOI_TEMPLATE_ID`.
+1. **Brevo:** create a contact list and a Double opt-in template whose button links to `{{ doubleoptin }}`; authenticate the sending domain; create an API key (API Keys tab, `xkeysib-`, not SMTP). Add an `optin` tag to the template and activate it. Create a second list, "User testing", and an automation: contact added to that list, send the testing email. Set `BREVO_API_KEY`, `BREVO_LIST_ID`, `BREVO_DOI_TEMPLATE_ID`, `BREVO_TESTING_LIST_ID`.
 2. **Turnstile:** add a widget for `icai.ekdoti.co` only, Managed mode (local development uses the test keys). Keep the DNS record DNS-only, not proxied, or every reader is counted under Cloudflare's IPs. Set `NEXT_PUBLIC_TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY`.
 3. **Upstash:** Vercel Marketplace, Upstash Redis, region `eu-central-1`; it injects `KV_REST_API_URL` / `KV_REST_API_TOKEN`.
 4. **Registry:** `NODE_AUTH_TOKEN` (a token with `read:packages`) so Vercel's install can fetch `@ekdotico/*` from GitHub Packages; and grant this repository Actions access on both packages for CI.
