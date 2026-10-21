@@ -103,7 +103,7 @@
 }
 .site-header-domain {
   font-family: var(--font-mono);
-  font-size: var(--fs-xs);
+  font-size: var(--fs-sm);
   color: var(--fg-3);
   margin-left: auto;
 }
@@ -126,7 +126,7 @@
 }
 .site-header-badge {
   font-family: var(--font-sans);
-  font-size: var(--fs-xs);
+  font-size: var(--fs-sm);
   /* 0.12em is --tr-label, which the package has stated all along and which
      .kv-key sets every label with. An earlier note here claimed no token stated
      it and moved the badge to --tr-widest to match the surrounding uppercase;
@@ -154,7 +154,7 @@
   justify-content: space-between;
   padding: var(--sp-6) var(--sp-4);
   font-family: var(--font-mono);
-  font-size: var(--fs-xs);
+  font-size: var(--fs-sm);
   color: var(--fg-3);
 }
 
@@ -175,7 +175,7 @@
 }
 .section-eyebrow {
   font-family: var(--font-sans);
-  font-size: var(--fs-xs);
+  font-size: var(--fs-sm);
   letter-spacing: var(--tr-label);
   color: var(--fg-3);
   margin: 0 0 var(--sp-2) 0;
@@ -227,13 +227,14 @@
    is legitimate for a display heading on a single marketing page: the title has
    to hold a full sentence at 375px and at 1600px without a breakpoint. What is
    not legitimate is inventing the endpoints, so both ends of each clamp come
-   from the scale and only the viewport slope is a literal. The title floors at
-   the section-heading size and the lede floors at the body size, which is the
-   relationship the rest of the page already states. */
+   from the scale and only the viewport slope is a literal. The title floors a
+   step under the section heading and tops out at --fs-4xl, with a gentler
+   slope: at --fs-5xl it ran to three heavy lines on a laptop, louder than the
+   form it introduces. The lede floors at the body size. */
 .hero-title {
   font-family: var(--font-serif);
   font-weight: var(--fw-regular);
-  font-size: clamp(var(--fs-2xl), 2.4vw + 0.9rem, var(--fs-5xl));
+  font-size: clamp(var(--fs-xl), 1.6vw + 0.9rem, var(--fs-4xl));
   line-height: var(--lh-tight);
   color: var(--fg-1);
   margin: 0 0 clamp(var(--sp-3), 2vh, var(--sp-6)) 0;
@@ -346,7 +347,7 @@
 }
 .waitlist-note {
   font-family: var(--font-sans);
-  font-size: var(--fs-xs);
+  font-size: var(--fs-sm);
   line-height: var(--lh-prose);
   color: var(--fg-3);
   margin: var(--sp-3) 0 0;
