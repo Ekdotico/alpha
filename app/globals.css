@@ -223,25 +223,20 @@
   display: block;
   margin: 0 auto clamp(var(--sp-4), 3vh, var(--sp-7)) auto;
 }
-/* The two hero ramps are fluid rather than a step off the --fs-* scale, which
-   is legitimate for a display heading on a single marketing page: the title has
-   to hold a full sentence at 375px and at 1600px without a breakpoint. What is
-   not legitimate is inventing the endpoints, so both ends of each clamp come
-   from the scale and only the viewport slope is a literal. The title floors a
-   step under the section heading and tops out at --fs-4xl, with a gentler
-   slope: at --fs-5xl it ran to three heavy lines on a laptop, louder than the
-   form it introduces. The lede floors at the body size. */
+/* The title and lede grow with the viewport through the package's fluid
+   tokens, which carry the ramps this hero settled on. An application never
+   writes its own clamp() for a font size (domico AGENTS.md, rule 2). */
 .hero-title {
   font-family: var(--font-serif);
   font-weight: var(--fw-regular);
-  font-size: clamp(var(--fs-xl), 1.6vw + 0.9rem, var(--fs-4xl));
+  font-size: var(--fs-display);
   line-height: var(--lh-tight);
   color: var(--fg-1);
   margin: 0 0 clamp(var(--sp-3), 2vh, var(--sp-6)) 0;
 }
 .hero-lede {
   font-family: var(--font-serif);
-  font-size: clamp(var(--fs-md), 1vw + 0.75rem, var(--fs-lg));
+  font-size: var(--fs-lede);
   line-height: var(--lh-prose);
   color: var(--fg-2);
   margin: 0 auto;
