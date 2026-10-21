@@ -7,7 +7,7 @@ export function Hero() {
       <div className="hero-body">
         {/* Decorative: the h1 beneath it says what the product is, and a named
             mark read "Ekdotico mark, image" before every visit's first line. */}
-        <LogoMark size={112} variant="solid" className="hero-logo" title="" />
+        <LogoMark size={80} variant="solid" className="hero-logo" title="" />
         <h1 id="hero-title" className="hero-title">
           A complete academic writing environment with a verifiable record of how it was written
         </h1>
