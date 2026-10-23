@@ -57,7 +57,10 @@ export default function PrivacyPage() {
             <p>
               <em>How long.</em> Until you unsubscribe, or until the waitlist closes after launch,
               whichever comes first; the testing list closes when testing ends, or with the
-              waitlist. Every message carries an unsubscribe link, which takes you off both.
+              waitlist. Every email after the confirmation request carries an unsubscribe link,
+              which stops all email from Ekdotico at once, from the waitlist and the testing list
+              alike. Brevo then keeps your address only as a record not to write to it again; to
+              have that record deleted too, write to the address above.
             </p>
             <p>
               <em>What you can ask for.</em> A copy of what is held about you, its correction, or
