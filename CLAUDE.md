@@ -64,7 +64,7 @@ This repository is proprietary: `LICENSE` reserves all rights and `package.json`
 |---|---|
 | `app/globals.css` | `@import`s the package's base + component layers, then this site's own layer: chrome geometry, the marketing sections, and the waitlist form's arrangement. Defines no tokens |
 | `app/layout.tsx` | Root layout: fonts, appearance cookie, `tokens.css`, `globals.css`. No chrome |
-| `app/(site)/layout.tsx` | Marketing chrome: `SkipLink` and `OpeningSequence` from `@ekdotico/domico`, then `SiteHeader` |
+| `app/(site)/layout.tsx` | Marketing chrome: `SkipLink` and `OpeningSequence` from `@ekdotico/domico`, `InPageLinks`, then `SiteHeader` |
 | `app/(site)/page.tsx` | `/` — composes the sections in order, and owns the home-page metadata |
 | `app/(site)/actions.ts` | The waitlist server action |
 | `app/(site)/privacy/page.tsx` · `app/(site)/confirmed/page.tsx` | The privacy notice; the page Brevo redirects to after confirmation |
