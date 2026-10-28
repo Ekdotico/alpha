@@ -1,9 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import { useActionState, useEffect, useId, useRef, useState } from 'react';
+import { type FormEvent, useActionState, useEffect, useId, useRef, useState } from 'react';
 import { Button, Checkbox, FormFault, TextField } from '@ekdotico/domico/components';
 import { submitWaitlist, type WaitlistState } from '@/app/(site)/actions';
+import { ATTRIBUTION_FIELDS, cleanAttribution, referrerHost, UTM_PARAMS } from '@/lib/attribution';
 import { TURNSTILE_ACTION, TURNSTILE_SCRIPT, turnstileSiteKey } from '@/lib/turnstile';
 
 // The waitlist form, rendered twice on the page: in the hero and in the closing
@@ -45,6 +46,26 @@ function loadTurnstile(): Promise<void> {
     document.head.appendChild(script);
   });
   return loading;
+}
+
+// Fills the hidden source fields from the address bar and the referrer as the
+// form is sent, not when the page loads, and keeps nothing in the browser:
+// storing it would need cookie consent. React reads the form data after this
+// handler returns, so the values travel with this submission. Any failure
+// leaves the fields empty and the signup goes ahead.
+function captureSource(event: FormEvent<HTMLFormElement>) {
+  try {
+    const form = event.currentTarget;
+    const set = (name: string, value: string | null) => {
+      const input = form.elements.namedItem(name);
+      if (input instanceof HTMLInputElement) input.value = value ?? '';
+    };
+    const params = new URLSearchParams(window.location.search);
+    for (const name of UTM_PARAMS) set(name, cleanAttribution(params.get(name)));
+    set('signup_referrer', referrerHost(document.referrer, window.location.hostname));
+  } catch {
+    // Attribution is a nicety; the signup is not.
+  }
 }
 
 export function WaitlistForm({ headingLevel = 2 }: { headingLevel?: 2 | 3 }) {
@@ -116,7 +137,7 @@ function WaitlistFields({
   }, [state]);
 
   return (
-    <form className="waitlist" action={formAction}>
+    <form className="waitlist" action={formAction} onSubmit={captureSource}>
       <div className="waitlist-row">
         <TextField
           id={fieldId}
@@ -154,6 +175,10 @@ function WaitlistFields({
         <label htmlFor={`${fieldId}-website`}>Website</label>
         <input id={`${fieldId}-website`} name="website" type="text" tabIndex={-1} autoComplete="off" />
       </div>
+
+      {Object.keys(ATTRIBUTION_FIELDS).map((name) => (
+        <input key={name} type="hidden" name={name} />
+      ))}
 
       <div ref={box} className="waitlist-check" />
 

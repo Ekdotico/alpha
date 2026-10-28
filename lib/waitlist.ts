@@ -1,5 +1,6 @@
 import 'server-only';
 import { email as emailSchema } from '@ekdotico/amyntico/validation';
+import { attributionAttributes } from '@/lib/attribution';
 import { clientIp, consumeClient, consumeSend } from '@/lib/rate-limit';
 import { absoluteUrl } from '@/lib/site';
 import { TURNSTILE_ACTION, TURNSTILE_ORIGIN } from '@/lib/turnstile';
@@ -16,7 +17,9 @@ import { TURNSTILE_ACTION, TURNSTILE_ORIGIN } from '@/lib/turnstile';
 //      the confirmation. The contact joins the list only once its owner clicks.
 //      A reader who ticked the testing box joins the testing list at the same
 //      moment, and a Brevo automation on that list sends the testing email, so
-//      an address nobody confirmed is never sent it.
+//      an address nobody confirmed is never sent it. The link the reader came
+//      from, if the form sent one, rides along as contact attributes, cleaned
+//      again here (lib/attribution.ts).
 //
 // The reply never says whether an address was already on the list: a repeat
 // signup, a signup the address limit absorbed, and a new one all answer "check
@@ -91,7 +94,7 @@ export async function joinWaitlist(form: FormData, headers: Headers): Promise<Wa
   }
 
   // 6.
-  return requestDoubleOptIn(email, form.get('testing') === 'yes');
+  return requestDoubleOptIn(email, form.get('testing') === 'yes', attributionAttributes(form));
 }
 
 // A Brevo ID from the environment, or null. Number('') is 0, which is an
@@ -123,7 +126,11 @@ async function verifyTurnstile(token: string, ip: string | null): Promise<boolea
   return outcome.success === true && (secret === TEST_SECRET || outcome.action === TURNSTILE_ACTION);
 }
 
-async function requestDoubleOptIn(email: string, testing: boolean): Promise<WaitlistResult> {
+async function requestDoubleOptIn(
+  email: string,
+  testing: boolean,
+  attributes: Record<string, string>,
+): Promise<WaitlistResult> {
   const apiKey = process.env.BREVO_API_KEY;
   const listId = brevoId('BREVO_LIST_ID');
   const templateId = brevoId('BREVO_DOI_TEMPLATE_ID');
@@ -152,6 +159,10 @@ async function requestDoubleOptIn(email: string, testing: boolean): Promise<Wait
       includeListIds: testingListId ? [listId, testingListId] : [listId],
       templateId,
       redirectionUrl: absoluteUrl('/confirmed'),
+      // Held with the unconfirmed contact and written on confirmation, like the
+      // lists. Left out when empty, so a later signup with no link never
+      // clears one an earlier signup recorded.
+      ...(Object.keys(attributes).length > 0 ? { attributes } : {}),
     }),
     signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
   });
