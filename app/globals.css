@@ -173,13 +173,6 @@
   margin: 0 auto;
   padding: var(--sp-12) var(--sp-4) var(--sp-10);
 }
-.section-eyebrow {
-  font-family: var(--font-sans);
-  font-size: var(--fs-sm);
-  letter-spacing: var(--tr-label);
-  color: var(--fg-3);
-  margin: 0 0 var(--sp-2) 0;
-}
 .section-heading {
   font-family: var(--font-serif);
   font-weight: var(--fw-regular);

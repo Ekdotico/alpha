@@ -3,7 +3,6 @@ import { SITE_META } from '@/lib/site';
 export function VerificationSection() {
   return (
     <section className="section" aria-labelledby="verify-title">
-      <p className="section-eyebrow">Verification</p>
       <h2 id="verify-title" className="section-heading">Public, accountless verification</h2>
       <div className="section-body">
         <p>

@@ -1,7 +1,6 @@
 export function PlatformSection() {
   return (
     <section className="section" aria-labelledby="platform-title">
-      <p className="section-eyebrow">The platform</p>
       <h2 id="platform-title" className="section-heading">One tab. Every tool.</h2>
       <div className="section-body">
         <p>

@@ -3,7 +3,6 @@ import { LinkedInIcon } from "@/components/icons/LinkedInIcon";
 export function TeamSection() {
   return (
     <section className="section" aria-labelledby="team-title">
-      <p className="section-eyebrow">The team</p>
       <h2 id="team-title" className="section-heading">Who is building Ekdotico</h2>
       <div className="section-body">
         <p>

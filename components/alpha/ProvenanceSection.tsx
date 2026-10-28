@@ -1,7 +1,6 @@
 export function ProvenanceSection() {
   return (
     <section className="section" aria-labelledby="provenance-title">
-      <p className="section-eyebrow">The provenance system</p>
       <h2 id="provenance-title" className="section-heading">The provenance record</h2>
       <div className="section-body">
         <p>
