@@ -63,6 +63,21 @@ describe('joinWaitlist', () => {
     expect(JSON.parse(calls[1].body).includeListIds).toEqual([7]);
   });
 
+  it('sends the link the reader came from as attributes, and none when there is none', async () => {
+    upstream({ success: true }, 201);
+    await joinWaitlist(
+      form({ ...valid, utm_source: 'LinkedIn', utm_content: 'Test<script>', utm_medium: '' }),
+      headers,
+    );
+    expect(JSON.parse(calls[1].body).attributes).toEqual({
+      UTM_SOURCE: 'linkedin',
+      UTM_CONTENT: 'testscript',
+    });
+    upstream({ success: true }, 201);
+    await joinWaitlist(form(valid), headers);
+    expect(JSON.parse(calls[1].body)).not.toHaveProperty('attributes');
+  });
+
   it('refuses a ticked box in production when there is no testing list to honour it', async () => {
     vi.stubEnv('NODE_ENV', 'production');
     vi.stubEnv('TURNSTILE_SECRET_KEY', 'real-secret');

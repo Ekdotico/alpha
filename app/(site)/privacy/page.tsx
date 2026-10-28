@@ -19,8 +19,9 @@ export default function PrivacyPage() {
           <h1 id="privacy-title" className="section-heading">How your address is kept</h1>
           <div className="section-body">
             <p>
-              The waitlist on this site collects the email address you enter, and whether you
-              ticked the box about user testing. The address is used to tell you when Ekdotico
+              The waitlist on this site collects the email address you enter, whether you ticked
+              the box about user testing, and the link that brought you to the form, as set out
+              below. The address is used to tell you when Ekdotico
               opens. It is not sold, shared for advertising, or added to any list you did not
               choose.
             </p>
@@ -31,6 +32,15 @@ export default function PrivacyPage() {
               for a session: nothing is arranged without your agreement, and any session comes
               with its own information about how what you share is handled. You can leave the
               testing list without leaving the waitlist by writing to the address below.
+            </p>
+            <p>
+              <em>Where you signed up from.</em> When you send the form, we also record the link
+              that brought you to this page: the labels in its address that name the post or
+              campaign you followed, and the name of the site you came from, such as
+              www.linkedin.com, without the page you were on. They are stored with your address in
+              Brevo, and only once you confirm it, to tell us which of our posts bring people to
+              the waitlist. Nothing is stored in your browser to do this, and no cookie
+              is set. They are kept, and deleted, with your address.
             </p>
             <p>
               <em>Who holds it.</em> The Ekdotico team, reachable at{' '}
