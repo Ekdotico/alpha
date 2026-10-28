@@ -197,8 +197,8 @@ function WaitlistFields({
       ) : null}
 
       <p className="waitlist-note">
-        One email to confirm your address, then news of the launch and nothing else. Every
-        message has an unsubscribe link. <Link href="/privacy">How your address is kept</Link>.
+        One email to confirm your address, then news of the launch. Every message has an
+        unsubscribe link. <Link href="/privacy">How your address is kept</Link>.
       </p>
     </form>
   );

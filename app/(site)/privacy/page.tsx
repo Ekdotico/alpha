@@ -11,70 +11,98 @@ export const metadata: Metadata = {
 // The notice GDPR Article 13 asks for at the point of collection: who holds
 // the address, why, on what basis, with whom, for how long, and what the reader
 // can ask for. Linked from the note under each waitlist form.
+//
+// It says what a reader needs and no more. Service providers are named by
+// category, which Article 13(1)(e) allows, and the names are given on request;
+// how the form is protected is not described. Each promise here is one the
+// project can keep without effort, or one the GDPR makes anyway.
+//
+// Change UPDATED with any change of substance.
+const UPDATED = '28 October 2026';
+
 export default function PrivacyPage() {
   return (
     <>
       <main id="main-content" tabIndex={-1}>
         <section className="section" aria-labelledby="privacy-title">
+          <p className="section-eyebrow">Privacy</p>
           <h1 id="privacy-title" className="section-heading">How your address is kept</h1>
           <div className="section-body">
             <p>
-              The waitlist on this site collects the email address you enter, whether you ticked
-              the box about user testing, and the link that brought you to the form, as set out
-              below. The address is used to tell you when Ekdotico
-              opens. It is not sold, shared for advertising, or added to any list you did not
-              choose.
+              <em>Last updated {UPDATED}.</em>
             </p>
             <p>
-              <em>User testing.</em> The box is optional and unticked unless you tick it. If you
-              do, your address also joins a separate testing list once you confirm it, and you
-              receive one email about what taking part involves. Ticking it does not sign you up
-              for a session: nothing is arranged without your agreement, and any session comes
-              with its own information about how what you share is handled. You can leave the
-              testing list without leaving the waitlist by writing to the address below.
+              <em>What is collected.</em> When you join the waitlist: the email address you enter,
+              whether you ticked the box about user testing, and the link that brought you to the
+              form. As with any website, your network address and browser details also reach the
+              site when you visit, and the form&rsquo;s spam check uses them.
             </p>
             <p>
-              <em>Where you signed up from.</em> When you send the form, we also record the link
-              that brought you to this page: the labels in its address that name the post or
-              campaign you followed, and the name of the site you came from, such as
-              www.linkedin.com, without the page you were on. They are stored with your address in
-              Brevo, and only once you confirm it, to tell us which of our posts bring people to
-              the waitlist. Nothing is stored in your browser to do this, and no cookie
-              is set. They are kept, and deleted, with your address.
+              <em>Why.</em> To tell you when Ekdotico opens; to send the one email about user
+              testing, if you asked for it; to keep the form free of spam and misuse; and to learn
+              which of our posts bring people to the waitlist. Your address is not sold or shared
+              for advertising.
+            </p>
+            <p>
+              <em>User testing.</em> The box is optional. If you tick it, your address also joins
+              a separate testing list once you confirm it, and you receive one email about what
+              taking part involves. Ticking it does not sign you up for a session; any session
+              comes with its own information about how what you share is handled. You can leave
+              the testing list without leaving the waitlist by writing to the address below.
+            </p>
+            <p>
+              <em>Where you signed up from.</em> When you send the form, the link that brought you
+              to this page is recorded with your address: the labels in its address that name the
+              post or campaign you followed, and the name of the site you came from, such as
+              www.linkedin.com, without the page you were on. It is kept only once you confirm
+              your address, and nothing is stored in your browser for it.
             </p>
             <p>
               <em>Who holds it.</em> The Ekdotico team, reachable at{' '}
               <a href={`mailto:${SITE_META.contact}`}>{SITE_META.contact}</a>.
             </p>
             <p>
-              <em>Why we may hold it.</em> Your consent, given twice: when you send the form, and
-              when you open the confirmation link. An address that is never confirmed is not added
-              to the list.
+              <em>Why we may hold it.</em> For the waitlist and the testing email, your consent,
+              given when you send the form and again when you open the confirmation link. You can
+              withdraw it at any time through the unsubscribe link in any of our emails. For the
+              spam check and for recording where you signed up from, our legitimate interest in
+              keeping the form working and in knowing which posts reach people. You can object to
+              either by writing to us.
             </p>
             <p>
-              <em>Where it is stored.</em> With Brevo, an email service based in France that keeps
-              its data in the European Union. Brevo also records when and from which network
-              address you confirmed, as evidence of your consent.
+              <em>Who else handles it.</em> Service providers who process it for us and on our
+              instructions: an email service in the European Union, which stores the waitlist,
+              sends its emails, and records when and from which network address you confirmed, as
+              evidence of your consent; the provider that hosts this site; and a spam-check
+              service, which looks at your browser and network address to tell a person from a
+              program. Where any of them may process data outside the European Union, safeguards
+              recognised by the GDPR, such as standard contractual clauses, apply. You can ask us
+              which providers we use.
             </p>
             <p>
-              <em>What else sees the form.</em> Cloudflare Turnstile checks that a person sent it,
-              from signals in your browser and your network address; it does not set an
-              advertising cookie. The site runs on Vercel, in its Frankfurt region. To stop the
-              form being misused, counters keyed by your network address and by a one-way hash of
-              your email address are kept for at most a day, on Upstash in the European Union.
+              <em>How long.</em> Your address is kept until you unsubscribe or ask us to delete
+              it, and no longer than the waitlist is needed for the launch; the testing list
+              closes when testing ends, or with the waitlist. Records used to stop the form being
+              misused are short-lived and deleted automatically.
             </p>
             <p>
-              <em>How long.</em> Until you unsubscribe, or until the waitlist closes after launch,
-              whichever comes first; the testing list closes when testing ends, or with the
-              waitlist. Every email after the confirmation request carries an unsubscribe link,
-              which stops all email from Ekdotico at once, from the waitlist and the testing list
-              alike. Brevo then keeps your address only as a record not to write to it again; to
-              have that record deleted too, write to the address above.
+              <em>Cookies.</em> This site sets no advertising or analytics cookies. Your browser
+              keeps a few settings for it, such as the appearance you choose.
             </p>
             <p>
-              <em>What you can ask for.</em> A copy of what is held about you, its correction, or
-              its deletion, by writing to the address above. You may also complain to a data
-              protection authority; in Greece, that is the Hellenic Data Protection Authority.
+              <em>Your rights.</em> You can ask for a copy of what is held about you, its
+              correction or deletion, a limit on how it is used, or a copy in a form you can take
+              elsewhere, by writing to the address above. We may ask you to confirm that the
+              address is yours first. You may also complain to a data protection authority; in
+              Greece, that is the Hellenic Data Protection Authority.
+            </p>
+            <p>
+              <em>Who the waitlist is for.</em> People aged 18 or over.
+            </p>
+            <p>
+              <em>Changes.</em> This notice may change; the date at the top shows the latest
+              version. A change to what you agreed to will be sent to you by email before it
+              applies.
             </p>
           </div>
         </section>
