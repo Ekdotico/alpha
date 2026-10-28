@@ -5,7 +5,6 @@ import { WaitlistForm } from '@/components/alpha/WaitlistForm';
 export function WaitlistSection() {
   return (
     <section className="section" aria-labelledby="waitlist-title">
-      <p className="section-eyebrow">Waitlist</p>
       <h2 id="waitlist-title" className="section-heading">Hear when Ekdotico opens</h2>
       <div className="section-body">
         <p>

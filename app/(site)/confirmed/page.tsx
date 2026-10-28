@@ -15,7 +15,6 @@ export default function ConfirmedPage() {
     <>
       <main id="main-content" tabIndex={-1}>
         <section className="section" aria-labelledby="confirmed-title">
-          <p className="section-eyebrow">Waitlist</p>
           <h1 id="confirmed-title" className="section-heading">Your address is confirmed</h1>
           <div className="section-body">
             <p>
