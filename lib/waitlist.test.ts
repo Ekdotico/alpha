@@ -96,6 +96,21 @@ describe('joinWaitlist', () => {
     expect(await joinWaitlist(form(valid), headers)).toEqual({ status: 'ok' });
   });
 
+  it('logs which success path a signup took, and never the address', async () => {
+    const info = vi.spyOn(console, 'info').mockImplementation(() => {});
+    for (const [status, path] of [
+      [201, 'brevo-created'],
+      [204, 'brevo-existing'],
+    ] as const) {
+      upstream({ success: true }, status);
+      await joinWaitlist(form(valid), headers);
+      expect(info).toHaveBeenLastCalledWith(`[waitlist] ok: ${path}`);
+    }
+    await joinWaitlist(form({ ...valid, website: 'x' }), headers);
+    expect(info).toHaveBeenLastCalledWith('[waitlist] ok: honeypot');
+    expect(JSON.stringify(info.mock.calls)).not.toMatch(/reader@example\.org/i);
+  });
+
   it('pretends success to a filled honeypot and calls nothing', async () => {
     upstream({ success: true }, 201);
     expect(await joinWaitlist(form({ ...valid, website: 'x' }), headers)).toEqual({ status: 'ok' });

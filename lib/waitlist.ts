@@ -57,9 +57,19 @@ class ConfigError extends Error {}
 
 const isProduction = () => process.env.NODE_ENV === 'production';
 
+// Every "check your inbox" looks the same to the reader, by design, so the log
+// is the only place that says which one it was: the trap, the address's own
+// limit, a new contact, or one Brevo already had (which it sends nothing to).
+// Never with the address, and never in the reader's answer.
+type OkPath = 'honeypot' | 'address-limit' | 'brevo-created' | 'brevo-existing';
+function ok(path: OkPath): WaitlistResult {
+  console.info(`[waitlist] ok: ${path}`);
+  return { status: 'ok' };
+}
+
 export async function joinWaitlist(form: FormData, headers: Headers): Promise<WaitlistResult> {
   // 1. A bot that filled the trap is told it succeeded, and nothing is sent.
-  if (String(form.get('website') ?? '') !== '') return { status: 'ok' };
+  if (String(form.get('website') ?? '') !== '') return ok('honeypot');
 
   // 2.
   const raw = form.get('email');
@@ -90,7 +100,7 @@ export async function joinWaitlist(form: FormData, headers: Headers): Promise<Wa
   // already been sent a link today, and saying more would confirm the address.
   const send = await consumeSend(email);
   if (!send.allowed) {
-    return send.scope === 'global' ? { status: 'refused', message: MESSAGES.global } : { status: 'ok' };
+    return send.scope === 'global' ? { status: 'refused', message: MESSAGES.global } : ok('address-limit');
   }
 
   // 6.
@@ -168,8 +178,9 @@ async function requestDoubleOptIn(
   });
 
   // 201 created, 204 an existing contact updated. Both are a success, and the
-  // second is deliberately indistinguishable from the first.
-  if (res.status === 201 || res.status === 204) return { status: 'ok' };
+  // second is deliberately indistinguishable from the first to the reader.
+  if (res.status === 201) return ok('brevo-created');
+  if (res.status === 204) return ok('brevo-existing');
 
   const detail = (await res.json().catch(() => ({}))) as { code?: string; message?: string };
   // Brevo is stricter than the schema about what it will deliver to.
