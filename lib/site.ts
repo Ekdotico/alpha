@@ -13,7 +13,7 @@ export const SITE_META = {
   // `${siteName} · ${tagline}` to build the document <title>.
   tagline: 'An academic writing environment with a cryptographic provenance system',
   description:
-    'Ekdotico is an academic writing environment with a cryptographic provenance system, in pre-launch development. Join the waitlist to hear when it opens.',
+    'Ekdotico is an academic writing environment with a cryptographic provenance system, in alpha development. Join the waitlist to hear when it opens.',
   // Where a reader writes about their data. Named on the privacy page and in
   // the note under each waitlist form.
   contact: 'stavros.apostolou@acg.edu',

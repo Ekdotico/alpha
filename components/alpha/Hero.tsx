@@ -12,7 +12,7 @@ export function Hero() {
           A complete academic writing environment with a verifiable record of how it was written
         </h1>
         <p className="hero-lede">
-          Ekdotico is a browser-based platform designed for advanced undergraduate students, graduate students, and researchers. One workspace brings together every writing tool needed from initial research to final export. Every sealed export carries a reference to the signed record of how it was written.
+          Ekdotico is a browser-based platform designed for advanced undergraduate students, graduate students, and researchers. It is a writing environment for theses, dissertations, and research articles. Every sealed export carries a reference to the signed record of how it was written.
         </p>
         <WaitlistForm />
       </div>
