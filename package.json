@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@ekdotico/amyntico": "0.8.0",
-    "@ekdotico/domico": "0.41.1",
+    "@ekdotico/domico": "0.41.2",
     "@upstash/ratelimit": "2.0.8",
     "@upstash/redis": "1.38.4",
     "next": "16.3.4",
