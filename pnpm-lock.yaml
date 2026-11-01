@@ -12,8 +12,8 @@ importers:
         specifier: 0.8.0
         version: 0.8.0(typescript@6.0.3)
       '@ekdotico/domico':
-        specifier: 0.41.1
-        version: 0.41.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: 0.41.2
+        version: 0.41.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@upstash/ratelimit':
         specifier: 2.0.8
         version: 2.0.8(@upstash/redis@1.38.4)
@@ -138,8 +138,8 @@ packages:
       '@clerk/backend':
         optional: true
 
-  '@ekdotico/domico@0.41.1':
-    resolution: {integrity: sha512-svExukQkzAKPGioHoMlhT1PzkbKyBIqY7dZWHwMIIrRp9ea8+uD/eCILFx8QQT4x5QZ19Qcuk1e9DOL3ksb7NA==, tarball: https://npm.pkg.github.com/download/@ekdotico/domico/0.41.1/d95f7b6e871bfb99bbbbb68900fb0d4b0df07e6d}
+  '@ekdotico/domico@0.41.2':
+    resolution: {integrity: sha512-gGDGxZ6qokqErMSqC4cAD3M2A/mnyiQBRRKANvLmtLnHyU4SUJ1A5Ml1XCZ4XcQ7Xv4aiIZPYScYDNu0m0xh1Q==, tarball: https://npm.pkg.github.com/download/@ekdotico/domico/0.41.2/bfcb3dd8a0154f53d44ceb9429f553998d655062}
     engines: {node: '>=24 <27'}
     hasBin: true
     peerDependencies:
@@ -2321,7 +2321,7 @@ snapshots:
       typescript: 6.0.3
       zod: 4.5.4
 
-  '@ekdotico/domico@0.41.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@ekdotico/domico@0.41.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
