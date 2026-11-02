@@ -9,7 +9,7 @@ export function WaitlistSection() {
       <div className="section-body">
         <p>
           Leave an email address and you will hear from us when Ekdotico opens. The first
-          message asks you to confirm the address; after that, only news of the launch.
+          message asks you to confirm the address; after that, only news of the opening.
         </p>
       </div>
       <WaitlistForm headingLevel={3} />

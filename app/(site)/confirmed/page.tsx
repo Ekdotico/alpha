@@ -18,7 +18,8 @@ export default function ConfirmedPage() {
           <h1 id="confirmed-title" className="section-heading">Your address is confirmed</h1>
           <div className="section-body">
             <p>
-              You are on the waitlist for news of Ekdotico&rsquo;s launch.
+              You are on the waitlist. You will hear from us when Ekdotico opens. If you also
+              ticked the user-testing box, one further email explains what testing involves.
             </p>
             <p>
               <Link href="/">Back to the Ekdotico page</Link>

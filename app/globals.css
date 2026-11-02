@@ -235,6 +235,14 @@
   margin: 0 auto;
   max-width: var(--measure);
 }
+.hero-status {
+  font-family: var(--font-serif);
+  font-size: var(--fs-md);
+  line-height: var(--lh-prose);
+  color: var(--fg-2);
+  margin: var(--sp-4) auto 0 auto;
+  max-width: var(--measure);
+}
 
 /* Verify endpoint block */
 .verify-endpoint {
