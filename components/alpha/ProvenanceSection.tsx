@@ -1,16 +1,19 @@
 export function ProvenanceSection() {
   return (
     <section className="section" aria-labelledby="provenance-title">
-      <h2 id="provenance-title" className="section-heading">The provenance record</h2>
+      <h2 id="provenance-title" className="section-heading">Istorico, the provenance system</h2>
       <div className="section-body">
         <p>
-          Every writing session generates an event log of keystrokes, paste events, source consultations, and AI invocations. The log is recorded as a factual account of how the document was written. The record collects five categories of signal: session chronology and active writing time, revision operations, source engagement, disclosed AI tool usage, and the cryptographic chain that binds them. Each session is signed with an Ed25519 signature as it closes, and a sealed export carries a provenance reference in its metadata: the document identifier, the document hash, and the verification address.
+          As designed, every writing session generates an event log of keystrokes, paste events, source consultations, and AI invocations. Documents you create belong to your account, not to an institution.
         </p>
         <p>
-          The record describes the process; it does not score the writing. It does not classify a document as AI-written or human-written, and it computes no measure of how much of the text came from where. Ekdotico produces no AI detector score at any point, and that is a permanent design position rather than a feature still to come: the published evidence on detectors records unverifiable outputs and systematic false positives against non-native English writers (Liang et al., 2023).
+          Each session is signed with Ed25519, a public-key signature scheme. A change to a signed record is detectable.
         </p>
         <p>
-          The provenance record is the student&apos;s document. On the Student Plan, it stays private until the student chooses to share it. On the Team Plan, supervisors receive read access to records created under the institution, on the consent the student gives at enrolment.
+          The provenance record contains no score, flag, or verdict. Ekdotico does not use AI text detectors. Published studies report that these detectors misclassify writing by non-native English speakers as AI-generated (<a href="https://doi.org/10.1016/j.patter.2023.100779">Liang et al., 2023</a>). The provenance record covers work done in Ekdotico only.
+        </p>
+        <p>
+          On the Team Plan, supervisors can read documents created in the institution&apos;s workspace while you are enrolled. Documents in your personal workspace stay outside institutional access. Read access to documents created during enrolment continues for the institution&apos;s declared review period after unenrolment.
         </p>
       </div>
     </section>

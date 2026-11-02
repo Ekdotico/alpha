@@ -56,7 +56,7 @@ The flow, its limits and where each piece of data lives are in `README.md` under
 
 ## Licence
 
-This repository is proprietary: `LICENSE` reserves all rights and `package.json` declares `"license": "UNLICENSED"`. AGPL-3.0 applies only to the Ekdotico provenance system and the core Ekdotico application, on their release. The footer's "Platform licence on release: AGPL-3.0" names the platform's licence, not this site's.
+This repository is proprietary: `LICENSE` reserves all rights and `package.json` declares `"license": "UNLICENSED"`. AGPL-3.0 applies only to the Ekdotico provenance system and the core Ekdotico application, on their release. The page does not name that licence until the repositories are public (see the comment in `SiteFooter.tsx`).
 
 ## File map
 

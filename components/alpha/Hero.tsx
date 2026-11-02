@@ -9,10 +9,15 @@ export function Hero() {
             mark read "Ekdotico mark, image" before every visit's first line. */}
         <LogoMark size={80} variant="solid" className="hero-logo" title="" />
         <h1 id="hero-title" className="hero-title">
-          A complete academic writing environment with a verifiable record of how it was written
+          A writing environment for theses, dissertations, and research articles
         </h1>
         <p className="hero-lede">
-          Ekdotico is a browser-based platform designed for advanced undergraduate students, graduate students, and researchers. One workspace brings together every writing tool needed from initial research to final export. Every sealed export carries a reference to the signed record of how it was written.
+          Istorico, the provenance system, records how a document was written inside Ekdotico. It does not establish who wrote the document, and it does not record activity outside Ekdotico.
+        </p>
+        {/* The release status, in the same view as the claims above it and
+            before the first form. Body size, not a footnote. */}
+        <p className="hero-status">
+          Ekdotico is in alpha development. The first version is being built and is not yet open for use. November 2026.
         </p>
         <WaitlistForm />
       </div>

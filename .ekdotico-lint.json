@@ -33,9 +33,9 @@
       "reason": "The match is the CSS keyword in the next/font style array, style: ['normal', 'italic'], not a claim about a reader's writing. The rule's own text exempts CSS 'normal'; the exemption cannot see it here because it sits in a source file rather than in prose."
     },
     {
-      "files": "components/alpha/VerificationSection.tsx",
-      "rules": ["vocabulary/supervisor"],
-      "reason": "\"A supervisor, a journal editor, or a reviewer\" enumerates who might retrieve a record. \"Supervisor\" is the canonical term used correctly; \"reviewer\" is the generic sense the vocabulary's own rationale records as confirmable rather than blocking. Carried from deree."
+      "files": "components/alpha/ProvenanceSection.tsx",
+      "rules": ["ai-generated-accusation"],
+      "reason": "\"Misclassify writing by non-native English speakers as AI-generated\" reports what detectors do wrong, citing Liang et al. (2023). It characterises the detectors' output, not a student's work, and is approved claims-ledger wording."
     }
   ]
 }
