@@ -245,18 +245,36 @@
      centred lede on a line of its own. Balanced lines leave no short last line. */
   text-wrap: balance;
 }
-/* The status callout: the package's Callout, centred under the lede at the
-   waitlist form's width, so the two read as one column. Its text is at body
-   size rather than the callout's default small size, because the status line
-   must not read as a footnote. Centred and balanced like the lede, and so
-   without the icon: a left-hand icon beside centred lines sits apart from them. */
-.hero .callout {
-  max-width: var(--form-w);
-  margin: var(--sp-5) auto 0 auto;
+/* The release status (AlphaNotice): a bar along the foot of the window, in the
+   manner of a consent banner, until the reader acknowledges it. Raised above the
+   page by a surface step, a hairline, and a shadow rather than colour. Below the
+   appearance panel (z-index 20), level with the sticky header. The text is at
+   body size: the status must not read as a footnote. */
+.alpha-notice {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: 10;
+  background: var(--bg-elevated);
+  border-top: 1px solid var(--rule);
+  box-shadow: var(--shadow-2);
 }
-.hero .callout-body {
+.alpha-notice-inner {
+  max-width: var(--content-w);
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3) var(--sp-5);
+  padding: var(--sp-4);
+}
+.alpha-notice-text {
+  flex: 1 1 32ch;
+  margin: 0;
+  font-family: var(--font-serif);
   font-size: var(--fs-md);
-  text-wrap: balance;
+  line-height: var(--lh-prose);
+  color: var(--fg-1);
 }
 
 /* Verify endpoint block */

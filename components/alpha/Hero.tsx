@@ -1,4 +1,3 @@
-import { Callout } from '@ekdotico/domico/components';
 import { LogoMark } from '@/components/Logo';
 import { WaitlistForm } from '@/components/alpha/WaitlistForm';
 
@@ -12,14 +11,12 @@ export function Hero() {
         <h1 id="hero-title" className="hero-title">
           A writing environment for theses, dissertations, and research articles
         </h1>
+        {/* The lede stays on the writing environment the title names. Istorico
+            opens its own section, where its record claim keeps its limit beside
+            it. The release status is AlphaNotice, in the site layout. */}
         <p className="hero-lede">
-          Istorico, the provenance system, records how a document was written inside Ekdotico. It does not establish who wrote the document, and it does not record activity outside Ekdotico.
+          Plan, research, write, and cite in one place, from the first outline to the final bibliography.
         </p>
-        {/* The release status, in the same view as the claims above it and
-            before the first form. Body size, not a footnote. */}
-        <Callout type="info" label="Status">
-          Ekdotico is in alpha development. The first version is being built and is not yet open for use as of November 2026.
-        </Callout>
         <WaitlistForm />
       </div>
     </section>

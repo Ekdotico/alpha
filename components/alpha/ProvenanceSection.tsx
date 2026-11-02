@@ -4,6 +4,9 @@ export function ProvenanceSection() {
       <h2 id="provenance-title" className="section-heading">Istorico, the provenance system</h2>
       <div className="section-body">
         <p>
+          Istorico records how a document was written inside Ekdotico. It does not establish who wrote the document, and it does not record activity outside Ekdotico.
+        </p>
+        <p>
           As designed, every writing session generates an event log of keystrokes, paste events, source consultations, and AI invocations. Documents you create belong to your account, not to an institution.
         </p>
         <p>

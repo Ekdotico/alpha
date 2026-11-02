@@ -14,11 +14,14 @@ export const SITE_META = {
   // limit in the same view, and a search result shows this text alone.
   tagline: 'A writing environment for theses, dissertations, and research articles',
   description:
-    'Ekdotico is a writing environment for theses, dissertations, and research articles. It is in alpha development and not yet open for use. Join the waitlist to hear when it opens.',
+    'Ekdotico is a writing environment for theses, dissertations, and research articles. It is in closed alpha and not yet open for use. Join the waitlist to hear when it opens.',
   // Where a reader writes about their data. Named on the privacy page and in
   // the note under each waitlist form.
   contact: 'stavros.apostolou@acg.edu',
 } as const;
+
+// Set once the reader acknowledges the release status in AlphaNotice.
+export const ALPHA_NOTICE_COOKIE = 'ekd-alpha-notice';
 
 export function absoluteUrl(path: string): string {
   if (path.startsWith('http')) return path;
