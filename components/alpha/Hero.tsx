@@ -1,3 +1,4 @@
+import { Callout } from '@ekdotico/domico/components';
 import { LogoMark } from '@/components/Logo';
 import { WaitlistForm } from '@/components/alpha/WaitlistForm';
 
@@ -16,9 +17,9 @@ export function Hero() {
         </p>
         {/* The release status, in the same view as the claims above it and
             before the first form. Body size, not a footnote. */}
-        <p className="hero-status">
+        <Callout type="info" label="Status">
           Ekdotico is in alpha development. The first version is being built and is not yet open for use. November 2026.
-        </p>
+        </Callout>
         <WaitlistForm />
       </div>
     </section>
