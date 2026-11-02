@@ -6,7 +6,7 @@ export function TeamSection() {
       <h2 id="team-title" className="section-heading">Who is building Ekdotico</h2>
       <div className="section-body">
         <p>
-          Ekdotico is in alpha development, by two undergraduate students at the American College of Greece.
+          Ekdotico is in closed alpha, built by two undergraduate students at the American College of Greece.
         </p>
         <dl className="team-list">
           <dt>

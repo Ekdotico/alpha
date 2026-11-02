@@ -32,7 +32,7 @@ export function SiteHeader() {
             header did not, so one of the two would have kept printing the old
             value the day it changes. */}
         <span className="site-header-domain">{SITE_META.domain}</span>
-        <span className="site-header-badge">Alpha development</span>
+        <span className="site-header-badge">Closed alpha</span>
         <AppearanceMenu className="site-header-appearance" />
       </div>
     </header>

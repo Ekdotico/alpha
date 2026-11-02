@@ -1,7 +1,21 @@
 'use server';
 
-import { headers } from 'next/headers';
+import { cookies, headers } from 'next/headers';
+import { ALPHA_NOTICE_COOKIE } from '@/lib/site';
 import { joinWaitlist, serviceFailure, type WaitlistResult } from '@/lib/waitlist';
+
+// Remembers that the reader acknowledged the release status. Setting a cookie
+// in an action re-renders the route, and AlphaNotice then renders nothing. A
+// year, and HttpOnly: nothing in the browser needs to read it.
+export async function acknowledgeAlphaNotice(): Promise<void> {
+  (await cookies()).set(ALPHA_NOTICE_COOKIE, '1', {
+    path: '/',
+    maxAge: 60 * 60 * 24 * 365,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
+    httpOnly: true,
+  });
+}
 
 /** What the form renders from: the result, and the input to put back. */
 export type WaitlistState = WaitlistResult & { email?: string; testing?: boolean };
