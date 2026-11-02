@@ -276,6 +276,18 @@
   line-height: var(--lh-prose);
   color: var(--fg-1);
 }
+/* While the bar is up, focus and in-page links stop short of it rather than
+   behind it (WCAG 2.2 §2.4.11): it covers 165px of a 375px-wide phone, where
+   both "How your address is kept" links were otherwise hidden under it. The
+   phone height everywhere; on a wider screen the extra space is only margin. */
+html:has(.alpha-notice) {
+  scroll-padding-block-end: calc(var(--sp-12) + var(--sp-9));
+}
+/* The button keeps to the right, beside the text or, once the bar wraps on a
+   phone, at the end of its own line. */
+.alpha-notice form {
+  margin-left: auto;
+}
 
 /* Verify endpoint block */
 .verify-endpoint {
@@ -383,6 +395,15 @@
 }
 .waitlist-note a {
   color: inherit;
+}
+/* Greedy wrapping for this site's short notes, overriding the base layer's
+   text-wrap: pretty. WebKit's pretty evens the rag over the whole paragraph, so
+   on a phone every line ended well short of the field above it and the notes
+   read as narrower than the form. Filled lines meet its edge. The field hint
+   under the testing box is the package's .ekd-field-hint, fixed in domico. */
+.waitlist-note,
+.alpha-notice-text {
+  text-wrap: wrap;
 }
 .waitlist .ekd-fault {
   margin-top: var(--sp-3);
