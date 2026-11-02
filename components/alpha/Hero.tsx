@@ -18,7 +18,7 @@ export function Hero() {
         {/* The release status, in the same view as the claims above it and
             before the first form. Body size, not a footnote. */}
         <Callout type="info" label="Status">
-          Ekdotico is in alpha development. The first version is being built and is not yet open for use. November 2026.
+          Ekdotico is in alpha development. The first version is being built and is not yet open for use as of November 2026.
         </Callout>
         <WaitlistForm />
       </div>

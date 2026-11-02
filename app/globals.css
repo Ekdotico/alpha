@@ -246,12 +246,12 @@
   text-wrap: balance;
 }
 /* The status callout: the package's Callout, centred under the lede at the
-   lede's measure, its text at body size rather than the callout's default
-   small size, because the status line must not read as a footnote. Centred and
-   balanced like the lede, and so without the icon: a left-hand icon beside
-   centred lines sits apart from them. */
+   waitlist form's width, so the two read as one column. Its text is at body
+   size rather than the callout's default small size, because the status line
+   must not read as a footnote. Centred and balanced like the lede, and so
+   without the icon: a left-hand icon beside centred lines sits apart from them. */
 .hero .callout {
-  max-width: var(--measure);
+  max-width: var(--form-w);
   margin: var(--sp-5) auto 0 auto;
 }
 .hero .callout-body {
