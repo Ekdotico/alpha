@@ -11,11 +11,12 @@ export function Hero() {
         <h1 id="hero-title" className="hero-title">
           A writing environment for theses, dissertations, and research articles
         </h1>
-        {/* The lede stays on the writing environment the title names. Istorico
-            opens its own section, where its record claim keeps its limit beside
-            it. The release status is AlphaNotice, in the site layout. */}
+        {/* The writing environment the title names, then the provenance record
+            that brings this audience here, with its limit in the next sentence:
+            a record claim never stands without it. Istorico is named in its own
+            section below. The release status is AlphaNotice, in the site layout. */}
         <p className="hero-lede">
-          Plan, research, write, and cite in one place, from the first outline to the final bibliography.
+          Plan, research, write, and cite in one place, with a record of how each document was written there. The record covers work inside Ekdotico only, and it does not establish who wrote the document.
         </p>
         <WaitlistForm />
       </div>
