@@ -289,20 +289,6 @@ html:has(.alpha-notice) {
   margin-left: auto;
 }
 
-/* Verify endpoint block */
-.verify-endpoint {
-  display: block;
-  font-family: var(--font-mono);
-  font-size: var(--fs-md);
-  color: var(--fg-1);
-  background: var(--bg-surface);
-  border: 1px solid var(--rule-soft);
-  border-radius: var(--radius-md);
-  padding: var(--sp-3) var(--sp-4);
-  margin: var(--sp-4) 0;
-  text-align: center;
-}
-
 /* Team list — two-column name/affiliation */
 .team-list {
   list-style: none;
