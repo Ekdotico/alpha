@@ -52,7 +52,7 @@
      than stated in rem, so its terms come from one place. */
   /* --sp-8 is a ceiling on the header's content row, not a measurement of it.
      The tallest item in the row is now the 36px appearance trigger rather than
-     the 22px logo, which measures the header at 61px against the 65px this
+     the 20px logo, which measures the header at 61px against the 65px this
      states. The overshoot is deliberate and the direction is the safe one: the
      hero's min-height subtracts this sum, so over-stating it makes the first
      screen 4px shorter than the viewport rather than 4px taller than it. There
@@ -92,6 +92,13 @@
   align-items: center;
   gap: var(--sp-4);
   padding: var(--sp-3) var(--sp-4);
+}
+/* The header lockup one step above the package's --fs-md. Crimson Pro's thin
+   strokes and narrow lower case read smaller than the mono domain and the sans
+   badge beside it, though their x-heights measure within a pixel. The tile is
+   one em square, so it grows with the letters. */
+.site-header .logo {
+  font-size: var(--fs-lg);
 }
 /* The lockup as a link home, off the homepage. It keeps the lockup's look: no
    underline, and the colour the lockup sets itself. The focus ring is the
@@ -234,20 +241,52 @@
   color: var(--fg-2);
   margin: 0 auto;
   max-width: var(--measure);
+  /* Balance, not the package's pretty: pretty still left the last word of a
+     centred lede on a line of its own. Balanced lines leave no short last line. */
+  text-wrap: balance;
 }
-
-/* Verify endpoint block */
-.verify-endpoint {
-  display: block;
-  font-family: var(--font-mono);
+/* The release status (AlphaNotice): a bar along the foot of the window, in the
+   manner of a consent banner, until the reader acknowledges it. Raised above the
+   page by a surface step, a hairline, and a shadow rather than colour. Below the
+   appearance panel (z-index 20), level with the sticky header. The text is at
+   body size: the status must not read as a footnote. */
+.alpha-notice {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: 10;
+  background: var(--bg-elevated);
+  border-top: 1px solid var(--rule);
+  box-shadow: var(--shadow-2);
+}
+.alpha-notice-inner {
+  max-width: var(--content-w);
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3) var(--sp-5);
+  padding: var(--sp-4);
+}
+.alpha-notice-text {
+  flex: 1 1 32ch;
+  margin: 0;
+  font-family: var(--font-serif);
   font-size: var(--fs-md);
+  line-height: var(--lh-prose);
   color: var(--fg-1);
-  background: var(--bg-surface);
-  border: 1px solid var(--rule-soft);
-  border-radius: var(--radius-md);
-  padding: var(--sp-3) var(--sp-4);
-  margin: var(--sp-4) 0;
-  text-align: center;
+}
+/* While the bar is up, focus and in-page links stop short of it rather than
+   behind it (WCAG 2.2 §2.4.11): it covers 165px of a 375px-wide phone, where
+   both "How your address is kept" links were otherwise hidden under it. The
+   phone height everywhere; on a wider screen the extra space is only margin. */
+html:has(.alpha-notice) {
+  scroll-padding-block-end: calc(var(--sp-12) + var(--sp-9));
+}
+/* The button keeps to the right, beside the text or, once the bar wraps on a
+   phone, at the end of its own line. */
+.alpha-notice form {
+  margin-left: auto;
 }
 
 /* Team list — two-column name/affiliation */
@@ -342,6 +381,15 @@
 }
 .waitlist-note a {
   color: inherit;
+}
+/* Greedy wrapping for this site's short notes, overriding the base layer's
+   text-wrap: pretty. WebKit's pretty evens the rag over the whole paragraph, so
+   on a phone every line ended well short of the field above it and the notes
+   read as narrower than the form. Filled lines meet its edge. The field hint
+   under the testing box is the package's .ekd-field-hint, fixed in domico. */
+.waitlist-note,
+.alpha-notice-text {
+  text-wrap: wrap;
 }
 .waitlist .ekd-fault {
   margin-top: var(--sp-3);

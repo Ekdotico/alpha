@@ -1,3 +1,4 @@
+import { AlphaNotice } from '@/components/alpha/AlphaNotice';
 import { InPageLinks } from '@/components/alpha/InPageLinks';
 import { SiteHeader } from '@/components/alpha/SiteHeader';
 import { OpeningSequence, SkipLink } from '@ekdotico/domico/components';
@@ -6,7 +7,8 @@ import { OpeningSequence, SkipLink } from '@ekdotico/domico/components';
 // targets #main-content, which every page in this group renders. OpeningSequence
 // plays once per session under the key every Ekdotico surface shares, and never
 // for a reader who asks for reduced motion. InPageLinks turns the arrow on an
-// in-page link up or down, towards its target.
+// in-page link up or down, towards its target. AlphaNotice is the release
+// status, until the reader acknowledges it.
 export default function SiteLayout({
   children,
 }: {
@@ -15,6 +17,7 @@ export default function SiteLayout({
   return (
     <>
       <SkipLink />
+      <AlphaNotice />
       <OpeningSequence />
       <InPageLinks />
       <SiteHeader />

@@ -6,7 +6,7 @@ export function TeamSection() {
       <h2 id="team-title" className="section-heading">Who is building Ekdotico</h2>
       <div className="section-body">
         <p>
-          Ekdotico is being built by two undergraduate students of the American College of Greece.
+          Ekdotico is in closed alpha, built by two undergraduate students at the American College of Greece.
         </p>
         <dl className="team-list">
           <dt>
@@ -21,7 +21,7 @@ export function TeamSection() {
               <LinkedInIcon />
             </a>
           </dt>
-          <dd>American College of Greece</dd>
+          <dd>Undergraduate, American College of Greece</dd>
           <dt>
             <span>Aimilios Zacharakis</span>
             <a
@@ -34,7 +34,7 @@ export function TeamSection() {
               <LinkedInIcon />
             </a>
           </dt>
-          <dd>American College of Greece</dd>
+          <dd>Undergraduate, American College of Greece</dd>
         </dl>
       </div>
     </section>
