@@ -5,6 +5,11 @@ import { STATIC_HEADERS } from '@ekdotico/amyntico/headers';
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  // `next upgrade --agent` with no type moves this site only when the
+  // installed release has a published security advisory.
+  experimental: {
+    agentUpgrade: 'security',
+  },
   // Pin the workspace root so Turbopack ignores stray lockfiles in parent
   // directories (e.g. ~/pnpm-lock.yaml) and always treats this repo as root.
   turbopack: {
