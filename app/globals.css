@@ -202,11 +202,28 @@
    this site ever wants a section break it should render <SectionRule /> from
    @ekdotico/domico/components rather than redraw one. */
 
-/* Hero */
+/* Hero. One screen: the header and the hero together are the viewport's height
+   wherever the text and the form fit in it, and the hero grows rather than
+   clips where they do not (a phone, a short window).
+
+   The landscape lies along the hero's lower edge, behind the text. The space
+   kept clear under the text is 72% of the painting's height, which is its
+   foreground; the top 28% is open sky between the two ranges of hills in the
+   middle of the picture, and the foot of the form may come down into it. The
+   form is no wider than that gap from 960px up; below that the rule at the end
+   of the landscape block keeps the text clear of the whole painting.
+
+   --hero-art-h is the painting's height: its own 1440 by 340 shape at the
+   viewport's width, and never less than twice --sp-11. --hero-art-on is 1
+   where the theme has a painting (the rules further down) and 0 where it has
+   none, so a hero without one reserves nothing. */
 .hero {
+  --hero-art-on: 0;
+  --hero-art-h: calc(var(--hero-art-on) * max(100vw * 340 / 1440, var(--sp-11) * 2));
+  position: relative;
   width: 100%;
   min-height: calc(100dvh - var(--chrome-h));
-  padding: clamp(var(--sp-6), 4vh, var(--sp-9)) 0;
+  padding: clamp(var(--sp-5), 3vh, var(--sp-9)) 0 max(var(--hero-art-h) * 0.72, var(--sp-6));
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -215,13 +232,11 @@
   box-sizing: border-box;
 }
 .hero-body {
+  position: relative;
+  z-index: 1;
   width: min(var(--content-w), 90vw);
   padding: 0 var(--sp-4);
   flex-shrink: 0;
-}
-.hero-logo {
-  display: block;
-  margin: 0 auto clamp(var(--sp-4), 3vh, var(--sp-7)) auto;
 }
 /* The title and lede grow with the viewport through the package's fluid
    tokens, which carry the ramps this hero settled on. An application never
@@ -235,7 +250,7 @@
   margin: 0 0 clamp(var(--sp-3), 2vh, var(--sp-6)) 0;
 }
 .hero-lede {
-  font-family: var(--font-serif);
+  font-family: var(--font-sans);
   font-size: var(--fs-lede);
   line-height: var(--lh-prose);
   color: var(--fg-2);
@@ -245,6 +260,125 @@
      centred lede on a line of its own. Balanced lines leave no short last line. */
   text-wrap: balance;
 }
+
+/* The hero landscape: one painting by day and one by night, edge to edge along the
+   foot of the hero, and above it a fog that fades the painting into that
+   theme's page colour. Both are backgrounds on one empty, aria-hidden element,
+   the painting on the element and the fog on its ::after, so the fog is the
+   layer above; both are anchored bottom right and drawn at one scale.
+
+   The box's height is --hero-art-h, stated on .hero, so the space is reserved
+   before the file arrives and nothing moves when it does. Below about 800px
+   the painting's shape would be a strip under 190px tall, so the height stops
+   shrinking at twice --sp-11 and the painting is cropped from the left
+   instead: the tower, the hills and the lake stay, and the cut falls in the
+   open meadow rather than through the olive trees. There the gap in the hills
+   is no longer under the form, so the text keeps clear of the whole painting.
+
+   The fog file is 153 rows to the painting's 340, which is the 45%.
+
+   Nothing here moves, so there is nothing to switch off for reduced motion. */
+.hero-art {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: var(--hero-art-h);
+  background: var(--hero-art) right bottom / auto 100% no-repeat;
+}
+.hero-art::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 45%;
+  background: var(--hero-fog) right bottom / auto 100% no-repeat;
+}
+/* The 2880-wide files, where the 1440-wide ones would be stretched. The same
+   query is HERO_ART_LARGE in lib/hero-art.ts, which preloads the painting. */
+@media (min-width: 1441px) or ((min-width: 720px) and (min-resolution: 1.5dppx)) {
+  .hero-art { background-image: var(--hero-art-lg); }
+  .hero-art::after { background-image: var(--hero-fog-lg); }
+}
+/* Which files, under the selectors tokens.css uses for the theme and the mode:
+   light by default, dark when chosen, and dark under the system's preference
+   when the reader has chosen neither.
+
+   The painting is the Parchment one in every theme, by day and by night; only
+   the mode chooses it. */
+.hero {
+  --hero-art: url('/hero/hero-parchment-light-1440.avif');
+  --hero-art-lg: url('/hero/hero-parchment-light.avif');
+}
+[data-mode="dark"] .hero {
+  --hero-art: url('/hero/hero-parchment-dark-1440.avif');
+  --hero-art-lg: url('/hero/hero-parchment-dark.avif');
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-mode]) .hero {
+    --hero-art: url('/hero/hero-parchment-dark-1440.avif');
+    --hero-art-lg: url('/hero/hero-parchment-dark.avif');
+  }
+}
+/* The fog is the theme's own, because it ends in the theme's page colour.
+   Library and Sepia have no light rule because their light fog was not
+   supplied (see lib/hero-art.ts), so --hero-art-on stays 0 there and the hero
+   is its text and form alone. */
+[data-theme="parchment"] .hero {
+  --hero-art-on: 1;
+  --hero-fog: url('/hero/fog-parchment-light-1440.avif');
+  --hero-fog-lg: url('/hero/fog-parchment-light.avif');
+}
+[data-theme="mono"] .hero {
+  --hero-art-on: 1;
+  --hero-fog: url('/hero/fog-mono-light-1440.avif');
+  --hero-fog-lg: url('/hero/fog-mono-light.avif');
+}
+[data-theme="parchment"][data-mode="dark"] .hero {
+  --hero-fog: url('/hero/fog-parchment-dark-1440.avif');
+  --hero-fog-lg: url('/hero/fog-parchment-dark.avif');
+}
+[data-theme="library"][data-mode="dark"] .hero {
+  --hero-art-on: 1;
+  --hero-fog: url('/hero/fog-library-dark-1440.avif');
+  --hero-fog-lg: url('/hero/fog-library-dark.avif');
+}
+[data-theme="sepia"][data-mode="dark"] .hero {
+  --hero-art-on: 1;
+  --hero-fog: url('/hero/fog-sepia-dark-1440.avif');
+  --hero-fog-lg: url('/hero/fog-sepia-dark.avif');
+}
+[data-theme="mono"][data-mode="dark"] .hero {
+  --hero-fog: url('/hero/fog-mono-dark-1440.avif');
+  --hero-fog-lg: url('/hero/fog-mono-dark.avif');
+}
+@media (prefers-color-scheme: dark) {
+  [data-theme="parchment"]:not([data-mode]) .hero {
+    --hero-fog: url('/hero/fog-parchment-dark-1440.avif');
+    --hero-fog-lg: url('/hero/fog-parchment-dark.avif');
+  }
+  [data-theme="library"]:not([data-mode]) .hero {
+    --hero-art-on: 1;
+    --hero-fog: url('/hero/fog-library-dark-1440.avif');
+    --hero-fog-lg: url('/hero/fog-library-dark.avif');
+  }
+  [data-theme="sepia"]:not([data-mode]) .hero {
+    --hero-art-on: 1;
+    --hero-fog: url('/hero/fog-sepia-dark-1440.avif');
+    --hero-fog-lg: url('/hero/fog-sepia-dark.avif');
+  }
+  [data-theme="mono"]:not([data-mode]) .hero {
+    --hero-fog: url('/hero/fog-mono-dark-1440.avif');
+    --hero-fog-lg: url('/hero/fog-mono-dark.avif');
+  }
+}
+@media (max-width: 959px) {
+  .hero { padding-bottom: max(var(--hero-art-h), var(--sp-6)); }
+}
+/* A painting fading into a page colour that forced colours has replaced, or
+   into paper, is a smear. Both get the hero without it. */
+@media (forced-colors: active), print {
+  .hero { padding-bottom: var(--sp-6); }
+  .hero-art { display: none; }
+}
+
 /* The release status (AlphaNotice): a bar along the foot of the window, in the
    manner of a consent banner, until the reader acknowledges it. Raised above the
    page by a surface step, a hairline, and a shadow rather than colour. Below the
@@ -347,9 +481,38 @@ html:has(.alpha-notice) {
   align-items: flex-end;
   gap: var(--sp-3);
 }
-.waitlist-row .ekd-field {
+/* The address field's own box in the row. In the hero it is also what the info
+   mark is placed against: the mark sits on the label's line at the field's
+   right edge, outside the <label>, because a button inside a label would be
+   pressed by a press on the label and read out as part of the field's name.
+   The pull upwards centres the mark's 24px target on the label's line.
+
+   Where the browser has anchor positioning, the mark sits close after the
+   label's words instead, a small gap from them: .waitlist-label is this site's
+   own span round the label text, and the mark is placed against its right
+   edge and its middle. */
+.waitlist-address {
+  position: relative;
   flex: 1;
   min-width: 0;
+}
+.waitlist-label {
+  anchor-name: --waitlist-label;
+}
+.waitlist-info {
+  position: absolute;
+  top: calc(var(--sp-1) / -2);
+  right: 0;
+  color: var(--fg-3);
+}
+@supports (anchor-name: --waitlist-label) {
+  .waitlist-info {
+    position-anchor: --waitlist-label;
+    top: anchor(center);
+    right: auto;
+    left: calc(anchor(right) + var(--sp-2));
+    translate: 0 -50%;
+  }
 }
 /* The honeypot. Off-screen rather than display: none, which some bots read as
    a cue to leave the field empty; kept out of the tab order and the
@@ -361,17 +524,15 @@ html:has(.alpha-notice) {
   height: 1px;
   overflow: hidden;
 }
-/* Turnstile renders its own iframe into this box. The min-height reserves the
-   widget's row so the note below does not jump when it arrives. */
 /* A step more than the gaps below it, so the optional box reads as its own
    choice rather than a caption under the address field. */
 .waitlist-testing {
   margin-top: var(--sp-4);
 }
-.waitlist-check {
-  margin-top: var(--sp-3);
-  min-height: var(--sp-8);
-}
+/* Turnstile renders into this box. It runs with nothing on the page and draws
+   its frame only when it has to ask the reader something (appearance:
+   'interaction-only' in WaitlistForm), so no row is reserved for it: the form
+   grows by the widget's height on the rare visit that needs one. */
 .waitlist-note {
   font-family: var(--font-sans);
   font-size: var(--fs-sm);

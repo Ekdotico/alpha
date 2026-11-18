@@ -2,7 +2,8 @@
 
 import Link from 'next/link';
 import { type FormEvent, useActionState, useEffect, useId, useRef, useState } from 'react';
-import { Button, Checkbox, FormFault, TextField } from '@ekdotico/domico/components';
+import { Button, Checkbox, FormFault, TextField, Tooltip } from '@ekdotico/domico/components';
+import { InfoIcon } from '@ekdotico/domico/icons';
 import { submitWaitlist, type WaitlistState } from '@/app/(site)/actions';
 import { ATTRIBUTION_FIELDS, cleanAttribution, referrerHost, UTM_PARAMS } from '@/lib/attribution';
 import { TURNSTILE_ACTION, TURNSTILE_SCRIPT, turnstileSiteKey } from '@/lib/turnstile';
@@ -68,7 +69,12 @@ function captureSource(event: FormEvent<HTMLFormElement>) {
   }
 }
 
-export function WaitlistForm({ headingLevel = 2 }: { headingLevel?: 2 | 3 }) {
+// The approved note on what the list sends, word for word. The closing
+// section's form prints it; the hero's form puts it behind the info mark.
+const WHAT_IS_SENT =
+  'One email confirms your address; after that, only news of the opening. If you also tick the user-testing box, one further email explains what testing involves. Every message has an unsubscribe link.';
+
+export function WaitlistForm({ headingLevel = 2, compact = false }: { headingLevel?: 2 | 3; compact?: boolean }) {
   const [state, formAction] = useActionState(submitWaitlist, null);
 
   if (state?.status === 'ok') {
@@ -89,7 +95,7 @@ export function WaitlistForm({ headingLevel = 2 }: { headingLevel?: 2 | 3 }) {
     );
   }
 
-  return <WaitlistFields state={state} formAction={formAction} headingLevel={headingLevel} />;
+  return <WaitlistFields state={state} formAction={formAction} headingLevel={headingLevel} compact={compact} />;
 }
 
 // The form itself, a component of its own so that the success message above
@@ -98,10 +104,12 @@ function WaitlistFields({
   state,
   formAction,
   headingLevel,
+  compact,
 }: {
   state: WaitlistState | null;
   formAction: (form: FormData) => void;
   headingLevel: 2 | 3;
+  compact: boolean;
 }) {
   const fieldId = useId();
   const box = useRef<HTMLDivElement>(null);
@@ -118,6 +126,7 @@ function WaitlistFields({
           action: TURNSTILE_ACTION,
           theme: 'auto',
           size: 'flexible',
+          appearance: 'interaction-only',
         });
       })
       .catch(() => {
@@ -139,9 +148,20 @@ function WaitlistFields({
   return (
     <form className="waitlist" action={formAction} onSubmit={captureSource}>
       <div className="waitlist-row">
+        <div className="waitlist-address">
+        {/* The hero's form is the short one, so that the hero is one screen:
+            what is sent is said behind the info mark on the label's line, and
+            in full on the page in the closing section's form. The mark is an
+            array, not an element, so that Tooltip renders its own trigger: a
+            button a press opens, which is what a touch has for a hover. */}
+        {compact ? (
+          <Tooltip className="waitlist-info" content={WHAT_IS_SENT}>
+            {[<InfoIcon key="mark" title="What we send" />]}
+          </Tooltip>
+        ) : null}
         <TextField
           id={fieldId}
-          label="Email address"
+          label={compact ? <span className="waitlist-label">Email address</span> : 'Email address'}
           name="email"
           type="email"
           autoComplete="email"
@@ -154,6 +174,7 @@ function WaitlistFields({
           defaultValue={state?.email ?? ''}
           error={state?.status === 'invalid' ? state.message : undefined}
         />
+        </div>
         <Button type="submit" variant="primary" pendingLabel="Adding you…">
           Join the waitlist
         </Button>
@@ -196,10 +217,11 @@ function WaitlistFields({
         </FormFault>
       ) : null}
 
+      {/* The link stays on the page in both forms: a tooltip holds text only,
+          because a link inside one cannot be reached with a keyboard. */}
       <p className="waitlist-note">
-        One email confirms your address; after that, only news of the opening. If you also
-        tick the user-testing box, one further email explains what testing involves. Every
-        message has an unsubscribe link. <Link href="/privacy">How your address is kept</Link>.
+        {compact ? null : `${WHAT_IS_SENT} `}
+        <Link href="/privacy">How your address is kept</Link>.
       </p>
     </form>
   );
