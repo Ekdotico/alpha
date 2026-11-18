@@ -220,8 +220,6 @@
   /* How much of the painting shows: its lowest 11% is under the fog's solid
      band, which is page colour, and hangs below the hero's edge unseen. */
   --hero-art-shown: calc(var(--hero-art-h) * 0.89);
-  /* The margin beside the text column, less a gap: the widest a cloud may be. */
-  --hero-cloud-w: min(17vw, (100vw - min(var(--content-w), 90vw)) / 2 - var(--sp-4));
   position: relative;
   width: 100%;
   min-height: calc(100dvh - var(--chrome-h));
@@ -297,30 +295,59 @@
   background: var(--bg-canvas);
   mask: url('/hero/fog-1440.avif') right bottom / auto 100% no-repeat;
 }
-/* The clouds, in the hero's top corners. Each is as wide as --hero-cloud-w,
-   which is never more than the margin beside the text column, so a cloud's box
-   and the text's box cannot meet at any width or height. Below 960px that
-   margin is a sliver, and the clouds are left out. */
-.hero::before,
-.hero::after {
-  content: '';
+/* The clouds, in the hero's top corners, behind nothing and over nothing.
+
+   The pictures fill their rectangles, so a cloud cannot meet the text only if
+   it is no wider than the free width beside the text, or no taller than the
+   free height above it. The box measures both, --sp-3 clear of the text, with
+   anchor positioning: its inner edge is the outermost of the title's lines,
+   the lede's lines and the form (the two spans are inline, so their anchor is
+   the bounding box of the lines as they wrapped, not the column), and its
+   lower edge is the text block's top. The box is its own size container, so
+   100cqw and 100cqh are those two measurements, and the picture takes the
+   larger cloud of the two, up to 17vw wide. No breakpoint: wrapping, the
+   window's height and the form's rows are all counted.
+
+   A cloud under 3rem tall or 4.5rem wide is a smudge (a container query cannot
+   read a custom property), so the picture is drawn only from there up.
+   Without anchor positioning the box is the column's margin and no height. */
+.hero-body { anchor-name: --hero-body; }
+.hero-title-text { anchor-name: --hero-title-text; }
+.hero-lede-text { anchor-name: --hero-lede-text; }
+.hero .waitlist { anchor-name: --hero-form; }
+.hero-cloud {
   position: absolute;
   top: 0;
-  width: var(--hero-cloud-w);
-  background: no-repeat top / contain;
+  width: calc((100vw - min(var(--content-w), 90vw)) / 2 - var(--sp-3));
+  height: 0;
+  container-type: size;
 }
-.hero::before {
-  left: 0;
-  aspect-ratio: 1;
-  background-image: var(--hero-cloud-l);
-  background-position-x: left;
+.hero-cloud--left { left: 0; --ratio: 1; --img: var(--hero-cloud-l); }
+.hero-cloud--right { right: 0; --ratio: 1.53; --img: var(--hero-cloud-r); }
+@supports (anchor-name: --hero-body) {
+  .hero-cloud {
+    width: auto;
+    height: auto;
+    bottom: calc(anchor(--hero-body top) + var(--sp-3));
+  }
+  .hero-cloud--left {
+    right: calc(max(anchor(--hero-title-text left), anchor(--hero-lede-text left), anchor(--hero-form left)) + var(--sp-3));
+  }
+  .hero-cloud--right {
+    left: calc(max(anchor(--hero-title-text right), anchor(--hero-lede-text right), anchor(--hero-form right)) + var(--sp-3));
+  }
 }
-.hero::after {
-  right: 0;
-  top: var(--sp-5);
-  aspect-ratio: 3 / 2;
-  background-image: var(--hero-cloud-r);
-  background-position-x: right;
+@container (min-height: 3rem) or (min-width: 4.5rem) {
+  .hero-cloud::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    height: min(max(100cqh, 100cqw / var(--ratio)), max(17vw, var(--sp-12)) / var(--ratio));
+    aspect-ratio: var(--ratio);
+    background: var(--img) no-repeat top / contain;
+  }
+  .hero-cloud--left::before { left: 0; background-position-x: left; }
+  .hero-cloud--right::before { right: 0; background-position-x: right; }
 }
 /* The 2880-wide files, where the 1440-wide ones would be stretched. The same
    query is HERO_ART_LARGE in lib/hero-art.ts, which preloads the painting. */
@@ -356,13 +383,12 @@
 }
 @media (max-width: 959px) {
   .hero { padding-bottom: max(var(--hero-art-shown), var(--sp-6)); }
-  .hero::before, .hero::after { display: none; }
 }
 /* A painting fading into a page colour that forced colours has replaced, or
    into paper, is a smear. Both get the hero without it. */
 @media (forced-colors: active), print {
   .hero { padding-bottom: var(--sp-6); }
-  .hero-art, .hero::before, .hero::after { display: none; }
+  .hero-art, .hero-cloud { display: none; }
 }
 
 /* The release status (AlphaNotice): a bar along the foot of the window, in the
@@ -498,10 +524,17 @@ html:has(.alpha-notice) {
 @supports (anchor-name: --waitlist-address-mark) {
   .waitlist-info {
     position-anchor: --waitlist-address-mark;
-    top: anchor(center);
+    /* As tall as the line it follows, and centred in it by flex. Not moved
+       with translate or transform: either makes a stacking context, and the
+       tooltip's panel would then be layered inside the mark, under any later
+       positioned row of the form. The margin lowers the centre by half itself. */
+    top: anchor(top);
+    bottom: anchor(bottom);
     right: auto;
     left: calc(anchor(right) + var(--sp-2) * 0.75);
-    translate: 0 calc(-50% + var(--sp-1) / 4);
+    margin-top: calc(var(--sp-1) / 2);
+    display: inline-flex;
+    align-items: center;
   }
   .waitlist-info--testing { position-anchor: --waitlist-testing-mark; }
 }

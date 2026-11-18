@@ -31,6 +31,22 @@ describe('hero art', () => {
     expect(painted(`/hero/cloud-${name}.avif`)).toBe(true);
   });
 
+  it('sizes the clouds from the laid-out text, not from a breakpoint', () => {
+    for (const name of ['--hero-body', '--hero-title-text', '--hero-lede-text', '--hero-form']) {
+      expect(css, name).toContain(`anchor-name: ${name};`);
+      expect(css, name).toContain(`anchor(${name} `);
+    }
+    expect(css).toContain('@container (min-height: 3rem) or (min-width: 4.5rem)');
+  });
+
+  // A transform or translate on the tooltip's wrapper makes a stacking context,
+  // and the panel's own layer then counts only inside it: the next positioned
+  // row paints over the open tooltip.
+  it('leaves the info marks out of a stacking context', () => {
+    const rules = [...css.replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/\.waitlist-info[^{]*\{([^}]*)\}/g)].map((m) => m[1]).join('\n');
+    expect(rules).not.toMatch(/\b(translate|transform|z-index|opacity|filter|isolation)\s*:/);
+  });
+
   it('swaps sizes at the same viewport as globals.css', () => {
     expect(css).toContain(`@media ${HERO_ART_LARGE}`);
   });
