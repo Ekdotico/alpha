@@ -74,6 +74,11 @@ function captureSource(event: FormEvent<HTMLFormElement>) {
 const WHAT_IS_SENT =
   'One email confirms your address; after that, only news of the opening. If you also tick the user-testing box, one further email explains what testing involves. Every message has an unsubscribe link.';
 
+// The approved hint under the testing box, word for word; behind its own info
+// mark in the hero's form.
+const TESTING_HINT =
+  'Optional. Once you confirm your address, we send one email about what testing involves. Nothing is arranged without your agreement.';
+
 export function WaitlistForm({ headingLevel = 2, compact = false }: { headingLevel?: 2 | 3; compact?: boolean }) {
   const [state, formAction] = useActionState(submitWaitlist, null);
 
@@ -161,7 +166,7 @@ function WaitlistFields({
         ) : null}
         <TextField
           id={fieldId}
-          label={compact ? <span className="waitlist-label">Email address</span> : 'Email address'}
+          label={compact ? <>Email address<span className="waitlist-mark waitlist-mark--address" /></> : 'Email address'}
           name="email"
           type="email"
           autoComplete="email"
@@ -182,14 +187,25 @@ function WaitlistFields({
 
       {/* Unticked by default: taking part in testing is a separate consent from
           joining the list, and GDPR does not count a pre-ticked box as one. */}
-      <Checkbox
-        className="waitlist-testing"
-        name="testing"
-        value="yes"
-        label="I would also like to hear about taking part in user testing"
-        hint="Optional. Once you confirm your address, we send one email about what testing involves. Nothing is arranged without your agreement."
-        defaultChecked={state?.testing ?? false}
-      />
+      <div className="waitlist-testing">
+        {compact ? (
+          <Tooltip className="waitlist-info waitlist-info--testing" content={TESTING_HINT}>
+            {[<InfoIcon key="mark" title="What testing involves" />]}
+          </Tooltip>
+        ) : null}
+        <Checkbox
+          name="testing"
+          value="yes"
+          label={
+            <>
+              I would also like to hear about taking part in user testing
+              {compact ? <span className="waitlist-mark waitlist-mark--testing" /> : null}
+            </>
+          }
+          hint={compact ? undefined : TESTING_HINT}
+          defaultChecked={state?.testing ?? false}
+        />
+      </div>
 
       {/* The honeypot: a field a person never sees or reaches. */}
       <div className="waitlist-trap" aria-hidden="true">
