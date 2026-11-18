@@ -1,4 +1,5 @@
 import { existsSync, readFileSync } from 'node:fs';
+import { DEFAULT_THEME } from '@ekdotico/domico/theme';
 import { themeNames } from '@ekdotico/domico/tokens';
 import { describe, expect, it } from 'vitest';
 import { HERO_ART_LARGE, RENDERED_MODES, heroArtFile, heroArtPreloads, heroFogFile } from './hero-art';
@@ -11,12 +12,27 @@ const painted = (file: string) => existsSync(`public${file}`) && css.includes(`u
 const pairs = themeNames.flatMap((theme) => RENDERED_MODES.map((mode) => [theme, mode] as const));
 
 describe('hero art', () => {
-  // The painting is chosen by mode alone and the fog is one mask filled with
-  // --bg-canvas, so a theme has both exactly when its tokens state that colour
-  // for the mode. A rule here that names a theme would break that, and fails.
-  it.each(pairs)('%s %s has the painting, the fog and a page colour to fill it', (theme, mode) => {
+  // Each theme has its own painting per mode, under the selectors tokens.css
+  // uses (the default theme's are on .hero alone). The fog is one mask filled
+  // with --bg-canvas, so a theme has it exactly when its tokens state that
+  // colour for the mode.
+  it.each(pairs)('%s %s has its painting, the fog and a page colour to fill it', (theme, mode) => {
+    const dark = mode === 'dark';
+    const rules =
+      theme === DEFAULT_THEME
+        ? [dark ? '[data-mode="dark"] .hero {' : '.hero {', ...(dark ? [':root:not([data-mode]) .hero {'] : [])]
+        : [
+            `[data-theme="${theme}"]${dark ? '[data-mode="dark"]' : ''} .hero {`,
+            ...(dark ? [`[data-theme="${theme}"]:not([data-mode]) .hero {`] : []),
+          ];
     for (const large of [false, true]) {
-      expect(painted(heroArtFile(mode, large)), heroArtFile(mode, large)).toBe(true);
+      const file = heroArtFile(theme, mode, large);
+      expect(existsSync(`public${file}`), file).toBe(true);
+      for (const rule of rules) {
+        // Some block opened by exactly this selector names the file.
+        const blocks = css.split(new RegExp(`(?<=\\n) *${rule.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\n`)).slice(1).map((b) => b.split('}')[0]);
+        expect(blocks.some((b) => b.includes(`url('${file}')`)), `${rule} ${file}`).toBe(true);
+      }
       expect(painted(heroFogFile(large)), heroFogFile(large)).toBe(true);
     }
     const selector = mode === 'dark' ? `[data-theme="${theme}"][data-mode="dark"] {` : `[data-theme="${theme}"] {`;
@@ -24,7 +40,6 @@ describe('hero art', () => {
     const block = tokens.slice(tokens.indexOf(selector)).split('}')[0];
     expect(block, `${selector} --bg-canvas`).toContain('--bg-canvas:');
     expect(css).toContain('background: var(--bg-canvas);');
-    expect(css, 'no hero rule may depend on a theme').not.toMatch(/\[data-theme[^\]]*\][^{]*\.hero/);
   });
 
   it.each(['left-light', 'right-light', 'left-dark', 'right-dark'])('cloud %s is a file globals.css paints', (name) => {
@@ -52,10 +67,10 @@ describe('hero art', () => {
   });
 
   it('preloads one painting for an explicit mode and both for Auto', () => {
-    expect(heroArtPreloads({ mode: 'dark' }).map((p) => p.href)).toEqual([
-      '/hero/hero-parchment-dark-1440.avif',
-      '/hero/hero-parchment-dark.avif',
+    expect(heroArtPreloads({ theme: 'sepia', mode: 'dark' }).map((p) => p.href)).toEqual([
+      '/hero/hero-sepia-dark-1440.avif',
+      '/hero/hero-sepia-dark.avif',
     ]);
-    expect(heroArtPreloads({ mode: 'auto' })).toHaveLength(4);
+    expect(heroArtPreloads({ theme: 'library', mode: 'auto' })).toHaveLength(4);
   });
 });
