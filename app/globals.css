@@ -60,6 +60,27 @@
      for a single control's height would fork the scale to buy back 4px. */
   --site-header-h: calc(var(--sp-3) * 2 + var(--sp-8) + 1px); /* 2×padding + content row ceiling + border */
   --chrome-h: var(--site-header-h);
+  /* How large the page is drawn: 1, or 1.5 on a very wide screen (below). */
+  --page-zoom: 1;
+}
+
+/* A 27-inch monitor at 2560 wide leaves every page a narrow strip of small
+   type. From 2200px the whole site is drawn at 150%: each route is laid out as
+   a 1707px window would lay it out, and then enlarged. A laptop, at 1728 wide
+   or less, is untouched. On the body, so the header, the release notice and
+   anything a component puts at the end of the body are all inside it.
+
+   Zoom enlarges viewport units with everything else, so 100dvh inside the body
+   would be a window and a half. Every vw, vh and dvh in this file is divided
+   by --page-zoom for that reason, which keeps the hero to one screen and its
+   painting to the window's width. */
+@media (min-width: 2200px) {
+  :root {
+    --page-zoom: 1.5;
+  }
+}
+body {
+  zoom: var(--page-zoom);
 }
 
 /* ============================================================
@@ -216,14 +237,14 @@
    --hero-art-h is the painting's height: its own 1440 by 340 shape at the
    viewport's width, and never less than twice --sp-11. */
 .hero {
-  --hero-art-h: max(100vw * 340 / 1440, var(--sp-11) * 2);
+  --hero-art-h: max((100vw / var(--page-zoom)) * 340 / 1440, var(--sp-11) * 2);
   /* How much of the painting shows: its lowest 11% is under the fog's solid
      band, which is page colour, and hangs below the hero's edge unseen. */
   --hero-art-shown: calc(var(--hero-art-h) * 0.89);
   position: relative;
   width: 100%;
-  min-height: calc(100dvh - var(--chrome-h));
-  padding: clamp(var(--sp-5), 3vh, var(--sp-9)) 0 max(var(--hero-art-h) * 0.61, var(--sp-6));
+  min-height: calc((100dvh / var(--page-zoom)) - var(--chrome-h));
+  padding: clamp(var(--sp-5), (3vh / var(--page-zoom)), var(--sp-9)) 0 max(var(--hero-art-h) * 0.61, var(--sp-6));
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -234,7 +255,7 @@
 .hero-body {
   position: relative;
   z-index: 1;
-  width: min(var(--content-w), 90vw);
+  width: min(var(--content-w), (90vw / var(--page-zoom)));
   padding: 0 var(--sp-4);
   flex-shrink: 0;
 }
@@ -247,7 +268,7 @@
   font-size: var(--fs-display);
   line-height: var(--lh-tight);
   color: var(--fg-1);
-  margin: 0 0 clamp(var(--sp-3), 2vh, var(--sp-6)) 0;
+  margin: 0 0 clamp(var(--sp-3), (2vh / var(--page-zoom)), var(--sp-6)) 0;
 }
 .hero-lede {
   font-family: var(--font-sans);
@@ -318,7 +339,7 @@
 .hero-cloud {
   position: absolute;
   top: 0;
-  width: calc((100vw - min(var(--content-w), 90vw)) / 2 - var(--sp-3));
+  width: calc(((100vw / var(--page-zoom)) - min(var(--content-w), (90vw / var(--page-zoom)))) / 2 - var(--sp-3));
   height: 0;
   container-type: size;
 }
@@ -342,7 +363,7 @@
     content: '';
     position: absolute;
     top: 0;
-    height: min(max(100cqh, 100cqw / var(--ratio)), max(17vw, var(--sp-12)) / var(--ratio));
+    height: min(max(100cqh, 100cqw / var(--ratio)), max((17vw / var(--page-zoom)), var(--sp-12)) / var(--ratio));
     aspect-ratio: var(--ratio);
     background: var(--img) no-repeat top / contain;
   }
@@ -482,7 +503,7 @@ html:has(.alpha-notice) {
 .waitlist {
   width: 100%;
   max-width: var(--form-w);
-  margin: clamp(var(--sp-5), 3vh, var(--sp-7)) auto 0;
+  margin: clamp(var(--sp-5), (3vh / var(--page-zoom)), var(--sp-7)) auto 0;
   text-align: left;
 }
 .section .waitlist {
