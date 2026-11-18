@@ -359,8 +359,8 @@
    light by default, dark when chosen, and dark under the system's preference
    when the reader has chosen neither.
 
-   The default is the Parchment painting; the other themes follow below. The
-   clouds are the same in every theme, by day and by night. */
+   The painting is the Parchment one in every theme, by day and by night; only
+   the mode chooses it. */
 .hero {
   --hero-art: url('/hero/hero-parchment-light-1440.avif');
   --hero-art-lg: url('/hero/hero-parchment-light.avif');
@@ -379,47 +379,6 @@
     --hero-art-lg: url('/hero/hero-parchment-dark.avif');
     --hero-cloud-l: url('/hero/cloud-left-dark.avif');
     --hero-cloud-r: url('/hero/cloud-right-dark.avif');
-  }
-}
-/* Each other theme's own painting, after the default so it wins: the same three
-   selectors per theme as tokens.css. hero-art.test.ts fails if a theme Domico
-   offers has no rule or no file here. */
-[data-theme="library"] .hero {
-  --hero-art: url('/hero/hero-library-light-1440.avif');
-  --hero-art-lg: url('/hero/hero-library-light.avif');
-}
-[data-theme="library"][data-mode="dark"] .hero {
-  --hero-art: url('/hero/hero-library-dark-1440.avif');
-  --hero-art-lg: url('/hero/hero-library-dark.avif');
-}
-[data-theme="sepia"] .hero {
-  --hero-art: url('/hero/hero-sepia-light-1440.avif');
-  --hero-art-lg: url('/hero/hero-sepia-light.avif');
-}
-[data-theme="sepia"][data-mode="dark"] .hero {
-  --hero-art: url('/hero/hero-sepia-dark-1440.avif');
-  --hero-art-lg: url('/hero/hero-sepia-dark.avif');
-}
-[data-theme="mono"] .hero {
-  --hero-art: url('/hero/hero-mono-light-1440.avif');
-  --hero-art-lg: url('/hero/hero-mono-light.avif');
-}
-[data-theme="mono"][data-mode="dark"] .hero {
-  --hero-art: url('/hero/hero-mono-dark-1440.avif');
-  --hero-art-lg: url('/hero/hero-mono-dark.avif');
-}
-@media (prefers-color-scheme: dark) {
-  [data-theme="library"]:not([data-mode]) .hero {
-    --hero-art: url('/hero/hero-library-dark-1440.avif');
-    --hero-art-lg: url('/hero/hero-library-dark.avif');
-  }
-  [data-theme="sepia"]:not([data-mode]) .hero {
-    --hero-art: url('/hero/hero-sepia-dark-1440.avif');
-    --hero-art-lg: url('/hero/hero-sepia-dark.avif');
-  }
-  [data-theme="mono"]:not([data-mode]) .hero {
-    --hero-art: url('/hero/hero-mono-dark-1440.avif');
-    --hero-art-lg: url('/hero/hero-mono-dark.avif');
   }
 }
 @media (max-width: 959px) {
