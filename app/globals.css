@@ -405,6 +405,15 @@ body {
 @media (max-width: 959px) {
   .hero { padding-bottom: max(var(--hero-art-shown), var(--sp-6)); }
 }
+/* On a phone the painting is short, and the fog is the lower third of what
+   shows of it: the first screen ended in the fade. The hero is taller than the
+   window there by 30% of the painting's height, which puts the window's lower
+   edge at about 60% of the way down the painting, above all but the first few
+   dots of fog (it is under 10% opaque to 66%). The fade into the page is a
+   short scroll further down. */
+@media (max-width: 520px) {
+  .hero { min-height: calc((100dvh / var(--page-zoom)) - var(--chrome-h) + var(--hero-art-h) * 0.3); }
+}
 /* A painting fading into a page colour that forced colours has replaced, or
    into paper, is a smear. Both get the hero without it. */
 @media (forced-colors: active), print {
