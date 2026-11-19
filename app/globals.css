@@ -73,7 +73,7 @@
    Zoom enlarges viewport units with everything else, so 100dvh inside the body
    would be a window and a half. Every vw, vh and dvh in this file is divided
    by --page-zoom for that reason, which keeps the hero to one screen and its
-   painting to the window's width. */
+   picture to the window's width. */
 @media (min-width: 2200px) {
   :root {
     --page-zoom: 1.5;
@@ -86,8 +86,8 @@ body {
 /* The page is never wider than 1440px. On a wider screen it stands as a sheet
    in the middle of a ground a little darker than itself, set off from it by a
    one-pixel rule on each side. Everything that used
-   to run the window's width, the header's rule, the hero's painting and
-   clouds, the release notice, now runs the sheet's.
+   to run the window's width, the header's rule, the hero's illustration,
+   the release notice, now runs the sheet's.
 
    --page-w is the sheet's width in the body's own (zoomed) pixels; it stands
    where 100vw stood. The ground is the canvas under a 3% layer of black, so it
@@ -249,27 +249,22 @@ body {
    @ekdotico/domico/components rather than redraw one. */
 
 /* Hero. One screen: the header and the hero together are the viewport's height
-   wherever the text and the form fit in it, and the hero grows rather than
-   clips where they do not (a phone, a short window).
+   wherever the text, the form and the picture fit in it, and the hero grows
+   rather than clips where they do not (a phone, a short window).
 
-   The landscape lies along the hero's lower edge, behind the text. The space
-   kept clear under the text is 61% of the painting's height, which is its
-   foreground as shown; the top 28% is open sky between the two ranges of hills in the
-   middle of the picture, and the foot of the form may come down into it. The
-   form is no wider than that gap from 960px up; below that the rule at the end
-   of the landscape block keeps the text clear of the whole painting.
+   The illustration lies along the hero's lower edge. The text never meets it:
+   the padding under the text is the picture's whole height, and from 1100px,
+   where the text stands in the picture's empty middle, the rule after
+   .hero-art says how.
 
-   --hero-art-h is the painting's height: its own 1440 by 340 shape at the
-   viewport's width, and never less than twice --sp-11. */
+   --hero-art-h is the picture's height: its own 2576 by 1098 shape at the
+   page's width. */
 .hero {
-  --hero-art-h: max(var(--page-w) * 340 / 1440, var(--sp-11) * 2);
-  /* How much of the painting shows: its lowest 11% is under the fog's solid
-     band, which is page colour, and hangs below the hero's edge unseen. */
-  --hero-art-shown: calc(var(--hero-art-h) * 0.89);
+  --hero-art-h: calc(var(--page-w) * 1098 / 2576);
   position: relative;
   width: 100%;
   min-height: calc((100dvh / var(--page-zoom)) - var(--chrome-h));
-  padding: clamp(var(--sp-5), (3vh / var(--page-zoom)), var(--sp-9)) 0 max(var(--hero-art-h) * 0.61, var(--sp-6));
+  padding: clamp(var(--sp-5), (3vh / var(--page-zoom)), var(--sp-9)) 0 calc(var(--hero-art-h) + var(--sp-5));
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -307,143 +302,57 @@ body {
   text-wrap: balance;
 }
 
-/* The hero landscape: one painting by day and one by night, edge to edge along the
-   foot of the hero, and above it a fog that fades the painting into that
-   theme's page colour. Both are backgrounds on one empty, aria-hidden element,
-   the painting on the element and the fog on its ::after, so the fog is the
-   layer above; both are anchored bottom right and drawn at one scale.
+/* The hero illustration: one picture for the light mode and one for the dark,
+   transparent, drawn straight on the page colour along the foot of the hero
+   with nothing over it. It is a background on one empty, aria-hidden element.
 
    The box's height is --hero-art-h, stated on .hero, so the space is reserved
-   before the file arrives and nothing moves when it does. Below about 800px
-   the painting's shape would be a strip under 190px tall, so the height stops
-   shrinking at twice --sp-11 and the painting is cropped from the left
-   instead: the tower, the hills and the lake stay, and the cut falls in the
-   open meadow rather than through the olive trees. There the gap in the hills
-   is no longer under the form, so the text keeps clear of the whole painting.
-
-   The fog file is 153 rows to the painting's 340, which is the 45%.
+   before the file arrives and nothing moves when it does.
 
    Nothing here moves, so there is nothing to switch off for reduced motion. */
 .hero-art {
   position: absolute;
   inset: auto 0 0 0;
-  height: var(--hero-art-shown);
-  overflow: hidden;
-  background: var(--hero-art) right top / auto var(--hero-art-h) no-repeat;
+  height: var(--hero-art-h);
+  background: var(--hero-art) center bottom / 100% auto no-repeat;
 }
-.hero-art::after {
-  content: '';
-  position: absolute;
-  inset: calc(var(--hero-art-h) * 0.55) 0 auto 0;
-  height: calc(var(--hero-art-h) * 0.45);
-  /* The fog is the page colour, in the shape of the fog file's opacity, so it
-     is right in every theme and mode without a file for each. */
-  background: var(--bg-canvas);
-  mask: url('/hero/fog-1440.avif') right bottom / auto 100% no-repeat;
+/* From 1100px the text stands in the picture's empty middle. Measured on the
+   picture: between 32% and 68% of its width nothing is drawn in its upper
+   half (the wizard's hat ends at 26%, the stair rail and its plants begin at
+   68%), so the column is 36% of the page and ends at half the picture's
+   height. Below 1100px that column would be under 400px, and the base rule
+   keeps the text above the whole picture instead. */
+@media (min-width: 1100px) {
+  .hero { padding-bottom: calc(var(--hero-art-h) * 0.5); }
+  .hero-body { width: min(var(--content-w), var(--page-w) * 0.36); }
 }
-/* The clouds, in the hero's top corners, behind nothing and over nothing.
-
-   The pictures fill their rectangles, so a cloud cannot meet the text only if
-   it is no wider than the free width beside the text, or no taller than the
-   free height above it. The box measures both, --sp-3 clear of the text, with
-   anchor positioning: its inner edge is the outermost of the title's lines,
-   the lede's lines and the form (the two spans are inline, so their anchor is
-   the bounding box of the lines as they wrapped, not the column), and its
-   lower edge is the text block's top. The box is its own size container, so
-   100cqw and 100cqh are those two measurements, and the picture takes the
-   larger cloud of the two, up to 17vw wide. No breakpoint: wrapping, the
-   window's height and the form's rows are all counted.
-
-   A cloud under 3rem tall or 4.5rem wide is a smudge (a container query cannot
-   read a custom property), so the picture is drawn only from there up.
-   Without anchor positioning the box is the column's margin and no height. */
-.hero-body { anchor-name: --hero-body; }
-.hero-title-text { anchor-name: --hero-title-text; }
-.hero-lede-text { anchor-name: --hero-lede-text; }
-.hero .waitlist { anchor-name: --hero-form; }
-.hero-cloud {
-  position: absolute;
-  top: 0;
-  width: calc((var(--page-w) - min(var(--content-w), (var(--page-w) * 0.9))) / 2 - var(--sp-3));
-  height: 0;
-  container-type: size;
-}
-.hero-cloud--left { left: 0; --ratio: 1; --img: var(--hero-cloud-l); }
-.hero-cloud--right { right: 0; --ratio: 1.53; --img: var(--hero-cloud-r); }
-@supports (anchor-name: --hero-body) {
-  .hero-cloud {
-    width: auto;
-    height: auto;
-    bottom: calc(anchor(--hero-body top) + var(--sp-3));
-  }
-  .hero-cloud--left {
-    right: calc(max(anchor(--hero-title-text left), anchor(--hero-lede-text left), anchor(--hero-form left)) + var(--sp-3));
-  }
-  .hero-cloud--right {
-    left: calc(max(anchor(--hero-title-text right), anchor(--hero-lede-text right), anchor(--hero-form right)) + var(--sp-3));
-  }
-}
-@container (min-height: 3rem) or (min-width: 4.5rem) {
-  .hero-cloud::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    height: min(max(100cqh, 100cqw / var(--ratio)), max((var(--page-w) * 0.17), var(--sp-12)) / var(--ratio));
-    aspect-ratio: var(--ratio);
-    background: var(--img) no-repeat top / contain;
-  }
-  .hero-cloud--left::before { left: 0; background-position-x: left; }
-  .hero-cloud--right::before { right: 0; background-position-x: right; }
-}
-/* The 2880-wide files, where the 1440-wide ones would be stretched. The same
-   query is HERO_ART_LARGE in lib/hero-art.ts, which preloads the painting. */
-@media (min-width: 1441px) or ((min-width: 720px) and (min-resolution: 1.5dppx)) {
+/* The 2576-wide files, where the 1288-wide ones would be stretched. The same
+   query is HERO_ART_LARGE in lib/hero-art.ts, which preloads the picture. */
+@media (min-width: 1289px) or ((min-width: 644px) and (min-resolution: 1.5dppx)) {
   .hero-art { background-image: var(--hero-art-lg); }
-  .hero-art::after { mask-image: url('/hero/fog.avif'); }
 }
-/* Which files, under the selectors tokens.css uses for the theme and the mode:
-   light by default, dark when chosen, and dark under the system's preference
-   when the reader has chosen neither.
-
-   The painting is the Parchment one in every theme, by day and by night; only
-   the mode chooses it. */
+/* Which files, under the selectors tokens.css uses for the mode: light by
+   default, dark when chosen, and dark under the system's preference when the
+   reader has chosen neither. Only the mode chooses; every theme has both. */
 .hero {
-  --hero-art: url('/hero/hero-parchment-light-1440.avif');
-  --hero-art-lg: url('/hero/hero-parchment-light.avif');
-  --hero-cloud-l: url('/hero/cloud-left-light.avif');
-  --hero-cloud-r: url('/hero/cloud-right-light.avif');
+  --hero-art: url('/hero/hero-v2-light-1288.avif');
+  --hero-art-lg: url('/hero/hero-v2-light.avif');
 }
 [data-mode="dark"] .hero {
-  --hero-art: url('/hero/hero-parchment-dark-1440.avif');
-  --hero-art-lg: url('/hero/hero-parchment-dark.avif');
-  --hero-cloud-l: url('/hero/cloud-left-dark.avif');
-  --hero-cloud-r: url('/hero/cloud-right-dark.avif');
+  --hero-art: url('/hero/hero-v2-dark-1288.avif');
+  --hero-art-lg: url('/hero/hero-v2-dark.avif');
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-mode]) .hero {
-    --hero-art: url('/hero/hero-parchment-dark-1440.avif');
-    --hero-art-lg: url('/hero/hero-parchment-dark.avif');
-    --hero-cloud-l: url('/hero/cloud-left-dark.avif');
-    --hero-cloud-r: url('/hero/cloud-right-dark.avif');
+    --hero-art: url('/hero/hero-v2-dark-1288.avif');
+    --hero-art-lg: url('/hero/hero-v2-dark.avif');
   }
 }
-@media (max-width: 959px) {
-  .hero { padding-bottom: max(var(--hero-art-shown), var(--sp-6)); }
-}
-/* On a phone the painting is short, and the fog is the lower third of what
-   shows of it: the first screen ended in the fade. The hero is taller than the
-   window there by 30% of the painting's height, which puts the window's lower
-   edge at about 60% of the way down the painting, above all but the first few
-   dots of fog (it is under 10% opaque to 66%). The fade into the page is a
-   short scroll further down. */
-@media (max-width: 520px) {
-  .hero { min-height: calc((100dvh / var(--page-zoom)) - var(--chrome-h) + var(--hero-art-h) * 0.3); }
-}
-/* A painting fading into a page colour that forced colours has replaced, or
-   into paper, is a smear. Both get the hero without it. */
+/* A picture on a page colour that forced colours has replaced, or on paper,
+   is noise. Both get the hero without it. */
 @media (forced-colors: active), print {
   .hero { padding-bottom: var(--sp-6); }
-  .hero-art, .hero-cloud { display: none; }
+  .hero-art { display: none; }
 }
 
 /* The release status (AlphaNotice): a bar along the foot of the window, in the
