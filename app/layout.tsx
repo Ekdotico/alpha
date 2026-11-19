@@ -16,7 +16,7 @@
  */
 import '@ekdotico/domico/tokens.css';
 import './globals.css';
-import { AppearanceProvider, DEFAULT_THEME } from '@ekdotico/domico/theme';
+import { AppearanceProvider } from '@ekdotico/domico/theme';
 import {
   appearanceAttributes,
   appearanceState,
@@ -90,7 +90,6 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      data-theme={DEFAULT_THEME}
       {...appearanceAttributes(store)}
       className={`${serif.variable} ${sans.variable} ${mono.variable}`}
     >
