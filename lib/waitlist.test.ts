@@ -20,7 +20,13 @@ let calls: Call[];
 
 // `listIds` is what Brevo's contact lookup answers for an existing contact
 // (the list by default); a DOI request after a delete answers 201.
-function upstream(turnstile: object, brevoStatus: number, brevoBody: object = {}, listIds = [7]) {
+function upstream(
+  turnstile: object,
+  brevoStatus: number,
+  brevoBody: object = {},
+  listIds = [7],
+  retryStatus = 201,
+) {
   calls = [];
   let deleted = false;
   vi.stubGlobal(
@@ -34,7 +40,11 @@ function upstream(turnstile: object, brevoStatus: number, brevoBody: object = {}
         deleted = true;
         return new Response(null, { status: 204 });
       }
-      if (deleted) return Response.json({}, { status: 201 });
+      if (deleted) {
+        return retryStatus === 204
+          ? new Response(null, { status: 204 })
+          : Response.json({}, { status: retryStatus });
+      }
       return brevoStatus === 204
         ? new Response(null, { status: 204 })
         : Response.json(brevoBody, { status: brevoStatus });
@@ -126,6 +136,17 @@ describe('joinWaitlist', () => {
       expect(JSON.parse(calls[4].body)).toMatchObject({ email: 'reader@example.org', templateId: 3 });
       expect(info).toHaveBeenLastCalledWith('[waitlist] ok: brevo-recreated');
     }
+  });
+
+  it('answers "check your inbox" when Brevo still holds the address after the delete, and logs why', async () => {
+    const info = vi.spyOn(console, 'info').mockImplementation(() => {});
+    upstream({ success: true }, 204, {}, [], 204);
+    expect(await joinWaitlist(form(valid), headers)).toEqual({ status: 'ok' });
+    expect(info).toHaveBeenCalledWith(
+      '[waitlist] resend: lookup 200, lists 0, blocklisted false, delete 204, retry 204',
+    );
+    expect(info).toHaveBeenLastCalledWith('[waitlist] ok: brevo-unsent');
+    expect(JSON.stringify(info.mock.calls)).not.toMatch(/reader@example\.org/i);
   });
 
   it('logs which success path a signup took, and never the address', async () => {

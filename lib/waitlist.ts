@@ -63,7 +63,13 @@ const isProduction = () => process.env.NODE_ENV === 'production';
 // limit, a new contact, one Brevo already had on a list (which it sends nothing
 // to), or one it had on neither list, deleted and sent a fresh confirmation.
 // Never with the address, and never in the reader's answer.
-type OkPath = 'honeypot' | 'address-limit' | 'brevo-created' | 'brevo-existing' | 'brevo-recreated';
+type OkPath =
+  | 'honeypot'
+  | 'address-limit'
+  | 'brevo-created'
+  | 'brevo-existing'
+  | 'brevo-recreated'
+  | 'brevo-unsent';
 function ok(path: OkPath): WaitlistResult {
   console.info(`[waitlist] ok: ${path}`);
   return { status: 'ok' };
@@ -189,10 +195,21 @@ async function requestDoubleOptIn(
   // Every path is the same "check your inbox" to the reader.
   if (res.status === 204) {
     const ours = [listId, brevoId('BREVO_TESTING_LIST_ID')].filter((id) => id !== null);
-    if (await onAnyList(apiKey, email, ours)) return ok('brevo-existing');
-    await deleteContact(apiKey, email);
+    const contact = await lookupContact(apiKey, email, ours);
+    if (contact.onOurList) return ok('brevo-existing');
+    const deleted = await deleteContact(apiKey, email);
     res = await request();
+    // What Brevo said at each step, without the address, so a resend that
+    // still sends nothing can be explained from the log.
+    console.info(
+      `[waitlist] resend: lookup ${contact.status}, lists ${contact.lists}, ` +
+        `blocklisted ${contact.blocklisted}, delete ${deleted}, retry ${res.status}`,
+    );
     if (res.status === 201) return ok('brevo-recreated');
+    // Brevo still holds the address somewhere the contacts API cannot reach,
+    // and sends nothing. Not the reader's fault, and not a reason to show them
+    // an error: the answer stays "check your inbox", the log says why not.
+    if (res.status === 204) return ok('brevo-unsent');
   }
   if (res.status === 201) return ok('brevo-created');
 
@@ -212,24 +229,38 @@ const brevoHeaders = (apiKey: string) => ({
 });
 const contactUrl = (email: string) => `${BREVO_CONTACTS_URL}/${encodeURIComponent(email)}`;
 
-async function onAnyList(apiKey: string, email: string, listIds: number[]): Promise<boolean> {
+interface ContactLookup {
+  status: number;
+  onOurList: boolean;
+  lists: number;
+  blocklisted: boolean;
+}
+
+async function lookupContact(apiKey: string, email: string, ours: number[]): Promise<ContactLookup> {
   const res = await fetch(contactUrl(email), {
     headers: brevoHeaders(apiKey),
     signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
   });
-  if (res.status === 404) return false;
+  if (res.status === 404) return { status: 404, onOurList: false, lists: 0, blocklisted: false };
   if (!res.ok) throw new Error(`Brevo contact lookup answered ${res.status}.`);
-  const contact = (await res.json()) as { listIds?: number[] };
-  return (contact.listIds ?? []).some((id) => listIds.includes(id));
+  const contact = (await res.json()) as { listIds?: number[]; emailBlacklisted?: boolean };
+  const listIds = contact.listIds ?? [];
+  return {
+    status: res.status,
+    onOurList: listIds.some((id) => ours.includes(id)),
+    lists: listIds.length,
+    blocklisted: contact.emailBlacklisted === true,
+  };
 }
 
-async function deleteContact(apiKey: string, email: string): Promise<void> {
+async function deleteContact(apiKey: string, email: string): Promise<number> {
   const res = await fetch(contactUrl(email), {
     method: 'DELETE',
     headers: brevoHeaders(apiKey),
     signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
   });
   if (!res.ok && res.status !== 404) throw new Error(`Brevo contact delete answered ${res.status}.`);
+  return res.status;
 }
 
 /** Every failure that is ours rather than the reader's, in one answer. */
