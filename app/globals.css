@@ -588,6 +588,15 @@ html:has(.alpha-notice) {
    its frame only when it has to ask the reader something (appearance:
    'interaction-only' in WaitlistForm), so no row is reserved for it: the form
    grows by the widget's height on the rare visit that needs one. */
+.waitlist-check:not(:empty) {
+  margin-top: var(--sp-4);
+}
+/* The page holds this form twice, so each form keeps its two marks' anchor
+   names to itself: without this an info mark could be placed against the
+   other form's label. */
+.waitlist {
+  anchor-scope: --waitlist-address-mark, --waitlist-testing-mark;
+}
 .waitlist-note {
   font-family: var(--font-sans);
   font-size: var(--fs-sm);

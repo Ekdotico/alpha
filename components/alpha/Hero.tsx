@@ -25,7 +25,7 @@ export async function Hero() {
         <p className="hero-lede">
           <span className="hero-lede-text">Plan, research, write, and cite in one place, with a record of how each document was written there. The record covers work inside Ekdotico only, and it does not establish who wrote the document.</span>
         </p>
-        <WaitlistForm compact />
+        <WaitlistForm />
       </div>
       {/* Decoration only: a background on an empty element, so a screen reader
           meets nothing here. It lies along the hero's lower edge; the
