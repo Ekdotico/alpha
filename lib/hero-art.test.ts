@@ -25,13 +25,13 @@ describe('hero art', () => {
 
   // The text never meets the picture: under it the padding is the picture's
   // whole height, and where the text stands in the picture's empty middle the
-  // column is 36% of the page and ends at half the picture's height.
+  // column is 40% of the page and ends at half the picture's height.
   it('keeps the text clear of the picture', () => {
     expect(rules).toContain('--hero-art-h: calc(var(--page-w) * 1098 / 2576);');
     expect(rules).toMatch(/\.hero \{[^}]*padding: [^;]* calc\(var\(--hero-art-h\) \+ var\(--sp-5\)\);/);
     const wide = rules.slice(rules.indexOf('@media (min-width: 1100px)')).split('@media')[1];
     expect(wide).toContain('.hero { padding-bottom: calc(var(--hero-art-h) * 0.5); }');
-    expect(wide).toContain('.hero-body { width: min(var(--content-w), var(--page-w) * 0.36); }');
+    expect(wide).toContain('.hero-body { width: min(var(--content-w), var(--page-w) * 0.4); }');
   });
 
   // A transform or translate on the tooltip's wrapper makes a stacking context,
