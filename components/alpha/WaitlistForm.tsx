@@ -8,7 +8,7 @@ import { submitWaitlist, type WaitlistState } from '@/app/(site)/actions';
 import { ATTRIBUTION_FIELDS, cleanAttribution, referrerHost, UTM_PARAMS } from '@/lib/attribution';
 import { TURNSTILE_ACTION, TURNSTILE_SCRIPT, turnstileSiteKey } from '@/lib/turnstile';
 
-// The waitlist form, rendered twice on the page: in the hero and in the closing
+// The waitlist form, the same one rendered twice on the page: in the hero and in the closing
 // section. Each instance has its own Turnstile widget, because a token is
 // single-use and belongs to one form.
 //
@@ -69,17 +69,17 @@ function captureSource(event: FormEvent<HTMLFormElement>) {
   }
 }
 
-// The approved note on what the list sends, word for word. The closing
-// section's form prints it; the hero's form puts it behind the info mark.
+// The approved note on what the list sends, word for word, behind the info
+// mark beside the address label.
 const WHAT_IS_SENT =
   'One email confirms your address; after that, only news of the opening. If you also tick the user-testing box, one further email explains what testing involves. Every message has an unsubscribe link.';
 
-// The approved hint under the testing box, word for word; behind its own info
-// mark in the hero's form.
+// The approved hint for the testing box, word for word, behind its own info
+// mark.
 const TESTING_HINT =
   'Optional. Once you confirm your address, we send one email about what testing involves. Nothing is arranged without your agreement.';
 
-export function WaitlistForm({ headingLevel = 2, compact = false }: { headingLevel?: 2 | 3; compact?: boolean }) {
+export function WaitlistForm({ headingLevel = 2 }: { headingLevel?: 2 | 3 }) {
   const [state, formAction] = useActionState(submitWaitlist, null);
 
   if (state?.status === 'ok') {
@@ -100,7 +100,7 @@ export function WaitlistForm({ headingLevel = 2, compact = false }: { headingLev
     );
   }
 
-  return <WaitlistFields state={state} formAction={formAction} headingLevel={headingLevel} compact={compact} />;
+  return <WaitlistFields state={state} formAction={formAction} headingLevel={headingLevel} />;
 }
 
 // The form itself, a component of its own so that the success message above
@@ -109,12 +109,10 @@ function WaitlistFields({
   state,
   formAction,
   headingLevel,
-  compact,
 }: {
   state: WaitlistState | null;
   formAction: (form: FormData) => void;
   headingLevel: 2 | 3;
-  compact: boolean;
 }) {
   const fieldId = useId();
   const box = useRef<HTMLDivElement>(null);
@@ -154,19 +152,16 @@ function WaitlistFields({
     <form className="waitlist" action={formAction} onSubmit={captureSource}>
       <div className="waitlist-row">
         <div className="waitlist-address">
-        {/* The hero's form is the short one, so that the hero is one screen:
-            what is sent is said behind the info mark on the label's line, and
-            in full on the page in the closing section's form. The mark is an
-            array, not an element, so that Tooltip renders its own trigger: a
-            button a press opens, which is what a touch has for a hover. */}
-        {compact ? (
-          <Tooltip className="waitlist-info" content={WHAT_IS_SENT}>
-            {[<InfoIcon key="mark" title="What we send" />]}
-          </Tooltip>
-        ) : null}
+        {/* What is sent is said behind the info mark on the label's line. The
+            mark is an array, not an element, so that Tooltip renders its own
+            trigger: a button a press opens, which is what a touch has for a
+            hover. */}
+        <Tooltip className="waitlist-info" content={WHAT_IS_SENT}>
+          {[<InfoIcon key="mark" title="What we send" />]}
+        </Tooltip>
         <TextField
           id={fieldId}
-          label={compact ? <>Email address<span className="waitlist-mark waitlist-mark--address" /></> : 'Email address'}
+          label={<>Email address<span className="waitlist-mark waitlist-mark--address" /></>}
           name="email"
           type="email"
           autoComplete="email"
@@ -188,21 +183,18 @@ function WaitlistFields({
       {/* Unticked by default: taking part in testing is a separate consent from
           joining the list, and GDPR does not count a pre-ticked box as one. */}
       <div className="waitlist-testing">
-        {compact ? (
-          <Tooltip className="waitlist-info waitlist-info--testing" content={TESTING_HINT}>
-            {[<InfoIcon key="mark" title="What testing involves" />]}
-          </Tooltip>
-        ) : null}
+        <Tooltip className="waitlist-info waitlist-info--testing" content={TESTING_HINT}>
+          {[<InfoIcon key="mark" title="What testing involves" />]}
+        </Tooltip>
         <Checkbox
           name="testing"
           value="yes"
           label={
             <>
               I would also like to hear about taking part in user testing
-              {compact ? <span className="waitlist-mark waitlist-mark--testing" /> : null}
+              <span className="waitlist-mark waitlist-mark--testing" />
             </>
           }
-          hint={compact ? undefined : TESTING_HINT}
           defaultChecked={state?.testing ?? false}
         />
       </div>
@@ -217,7 +209,6 @@ function WaitlistFields({
         <input key={name} type="hidden" name={name} />
       ))}
 
-      <div ref={box} className="waitlist-check" />
 
       {state?.status === 'refused' ? (
         <FormFault headingLevel={headingLevel} focusKey={state}>
@@ -233,12 +224,14 @@ function WaitlistFields({
         </FormFault>
       ) : null}
 
-      {/* The link stays on the page in both forms: a tooltip holds text only,
-          because a link inside one cannot be reached with a keyboard. */}
+      {/* The link stays on the page: a tooltip holds text only, because a link
+          inside one cannot be reached with a keyboard. */}
       <p className="waitlist-note">
-        {compact ? null : `${WHAT_IS_SENT} `}
         <Link href="/privacy">How your address is kept</Link>.
       </p>
+
+      {/* Turnstile renders here, last in the form, under the link. */}
+      <div ref={box} className="waitlist-check" />
     </form>
   );
 }
