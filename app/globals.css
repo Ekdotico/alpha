@@ -84,13 +84,13 @@ body {
 }
 
 /* The page is never wider than 1440px. On a wider screen it stands as a sheet
-   in the middle of a ground a little darker than itself, raised from it by a
-   soft shadow on one side and a soft light on the other. Everything that used
+   in the middle of a ground a little darker than itself, set off from it by a
+   one-pixel rule on each side. Everything that used
    to run the window's width, the header's rule, the hero's illustration,
    the release notice, now runs the sheet's.
 
    --page-w is the sheet's width in the body's own (zoomed) pixels; it stands
-   where 100vw stood. The ground is the canvas under a 20% layer of black, so it
+   where 100vw stood. The ground is the canvas under a 3% layer of black, so it
    is darker than the page in every theme. */
 :root {
   --page-max: 1440px;
@@ -98,16 +98,13 @@ body {
 }
 @media (min-width: 1441px) {
   html {
-    background: color-mix(in srgb, var(--bg-canvas) 80%, black);
+    background: color-mix(in srgb, var(--bg-canvas) 97%, black);
   }
   body {
     max-width: var(--page-max);
     min-height: calc(100dvh / var(--page-zoom));
     margin-inline: auto;
     border-inline: 1px solid var(--rule);
-    box-shadow:
-      var(--sp-4) 0 var(--sp-8) calc(var(--sp-3) * -1) color-mix(in oklab, black 18%, transparent),
-      calc(var(--sp-4) * -1) 0 var(--sp-8) calc(var(--sp-3) * -1) color-mix(in oklab, var(--bg-raised) 55%, transparent);
   }
 }
 
