@@ -83,6 +83,33 @@ body {
   zoom: var(--page-zoom);
 }
 
+/* The page is never wider than 1440px. On a wider screen it stands as a sheet
+   in the middle of a ground a little darker than itself, raised from it by a
+   soft shadow on one side and a soft light on the other. Everything that used
+   to run the window's width, the header's rule, the hero's painting and
+   clouds, the release notice, now runs the sheet's.
+
+   --page-w is the sheet's width in the body's own (zoomed) pixels; it stands
+   where 100vw stood. The ground is the canvas with a little black in it, so it
+   is darker than the page in every theme. */
+:root {
+  --page-max: 1440px;
+  --page-w: min(100vw / var(--page-zoom), var(--page-max));
+}
+@media (min-width: 1441px) {
+  html {
+    background: color-mix(in oklab, var(--bg-canvas) 93%, black);
+  }
+  body {
+    max-width: var(--page-max);
+    min-height: calc(100dvh / var(--page-zoom));
+    margin-inline: auto;
+    box-shadow:
+      var(--sp-4) 0 var(--sp-8) calc(var(--sp-3) * -1) color-mix(in oklab, black 18%, transparent),
+      calc(var(--sp-4) * -1) 0 var(--sp-8) calc(var(--sp-3) * -1) color-mix(in oklab, var(--bg-raised) 55%, transparent);
+  }
+}
+
 /* ============================================================
    RESET & BASE
    ----------------------------------------------------------------
@@ -237,7 +264,7 @@ body {
    --hero-art-h is the painting's height: its own 1440 by 340 shape at the
    viewport's width, and never less than twice --sp-11. */
 .hero {
-  --hero-art-h: max((100vw / var(--page-zoom)) * 340 / 1440, var(--sp-11) * 2);
+  --hero-art-h: max(var(--page-w) * 340 / 1440, var(--sp-11) * 2);
   /* How much of the painting shows: its lowest 11% is under the fog's solid
      band, which is page colour, and hangs below the hero's edge unseen. */
   --hero-art-shown: calc(var(--hero-art-h) * 0.89);
@@ -255,7 +282,7 @@ body {
 .hero-body {
   position: relative;
   z-index: 1;
-  width: min(var(--content-w), (90vw / var(--page-zoom)));
+  width: min(var(--content-w), (var(--page-w) * 0.9));
   padding: 0 var(--sp-4);
   flex-shrink: 0;
 }
@@ -339,7 +366,7 @@ body {
 .hero-cloud {
   position: absolute;
   top: 0;
-  width: calc(((100vw / var(--page-zoom)) - min(var(--content-w), (90vw / var(--page-zoom)))) / 2 - var(--sp-3));
+  width: calc((var(--page-w) - min(var(--content-w), (var(--page-w) * 0.9))) / 2 - var(--sp-3));
   height: 0;
   container-type: size;
 }
@@ -363,7 +390,7 @@ body {
     content: '';
     position: absolute;
     top: 0;
-    height: min(max(100cqh, 100cqw / var(--ratio)), max((17vw / var(--page-zoom)), var(--sp-12)) / var(--ratio));
+    height: min(max(100cqh, 100cqw / var(--ratio)), max((var(--page-w) * 0.17), var(--sp-12)) / var(--ratio));
     aspect-ratio: var(--ratio);
     background: var(--img) no-repeat top / contain;
   }
@@ -429,6 +456,8 @@ body {
 .alpha-notice {
   position: fixed;
   inset: auto 0 0 0;
+  max-width: var(--page-max);
+  margin-inline: auto;
   z-index: 10;
   background: var(--bg-elevated);
   border-top: 1px solid var(--rule);
