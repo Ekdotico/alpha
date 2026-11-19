@@ -17,6 +17,9 @@
    rules that could tie, so its position in the cascade does not matter, and
    docs keeps it there too. */
 @import '@ekdotico/domico/styles.css';
+/* The wide-screen frame, from the package since 0.47.0: above 1440px the page
+   is a sheet capped at 1440px on a slightly darker ground. */
+@import '@ekdotico/domico/styles/frame.css';
 
 /* ============================================================
    EKDOTICO — WAITLIST SITE (ALPHA)
@@ -95,17 +98,9 @@ body {
 :root {
   --page-max: 1440px;
   --page-w: min(100vw / var(--page-zoom), var(--page-max));
-}
-@media (min-width: 1441px) {
-  html {
-    background: color-mix(in srgb, var(--bg-canvas) 97%, black);
-  }
-  body {
-    max-width: var(--page-max);
-    min-height: calc(100dvh / var(--page-zoom));
-    margin-inline: auto;
-    border-inline: 1px solid var(--rule);
-  }
+  /* The sheet itself is the package's styles/frame.css, imported at the top
+     of this file. It divides its screen-tall minimum back by this factor. */
+  --frame-zoom: var(--page-zoom);
 }
 
 /* ============================================================
