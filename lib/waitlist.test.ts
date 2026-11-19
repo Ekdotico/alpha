@@ -24,7 +24,7 @@ function upstream(
   turnstile: object,
   brevoStatus: number,
   brevoBody: object = {},
-  listIds = [7],
+  listIds: number[] | null = [7],
   retryStatus = 201,
 ) {
   calls = [];
@@ -35,7 +35,9 @@ function upstream(
       const method = init.method ?? 'GET';
       calls.push({ url, method, body: String(init.body) });
       if (url.includes('siteverify')) return Response.json(turnstile);
-      if (method === 'GET') return Response.json({ listIds });
+      if (method === 'GET') {
+        return listIds ? Response.json({ listIds }) : Response.json({}, { status: 404 });
+      }
       if (method === 'DELETE') {
         deleted = true;
         return new Response(null, { status: 204 });
@@ -136,6 +138,14 @@ describe('joinWaitlist', () => {
       expect(JSON.parse(calls[4].body)).toMatchObject({ email: 'reader@example.org', templateId: 3 });
       expect(info).toHaveBeenLastCalledWith('[waitlist] ok: brevo-recreated');
     }
+  });
+
+  it('asks Brevo once for an address still waiting to confirm, which Brevo re-sends itself', async () => {
+    const info = vi.spyOn(console, 'info').mockImplementation(() => {});
+    upstream({ success: true }, 204, {}, null);
+    expect(await joinWaitlist(form(valid), headers)).toEqual({ status: 'ok' });
+    expect(calls.slice(1).map((c) => c.method)).toEqual(['POST', 'GET']);
+    expect(info).toHaveBeenLastCalledWith('[waitlist] ok: brevo-pending');
   });
 
   it('answers "check your inbox" when Brevo still holds the address after the delete, and logs why', async () => {

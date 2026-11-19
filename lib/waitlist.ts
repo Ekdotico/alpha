@@ -68,6 +68,7 @@ type OkPath =
   | 'address-limit'
   | 'brevo-created'
   | 'brevo-existing'
+  | 'brevo-pending'
   | 'brevo-recreated'
   | 'brevo-unsent';
 function ok(path: OkPath): WaitlistResult {
@@ -196,6 +197,10 @@ async function requestDoubleOptIn(
   if (res.status === 204) {
     const ours = [listId, brevoId('BREVO_TESTING_LIST_ID')].filter((id) => id !== null);
     const contact = await lookupContact(apiKey, email, ours);
+    // No contact record: the address is still waiting for its confirmation,
+    // and Brevo answers that with 204 and sends the email again itself.
+    // Deleting and asking a second time would send it twice.
+    if (contact.status === 404) return ok('brevo-pending');
     if (contact.onOurList) return ok('brevo-existing');
     const deleted = await deleteContact(apiKey, email);
     res = await request();
