@@ -90,7 +90,7 @@ body {
    clouds, the release notice, now runs the sheet's.
 
    --page-w is the sheet's width in the body's own (zoomed) pixels; it stands
-   where 100vw stood. The ground is the canvas with a little black in it, so it
+   where 100vw stood. The ground is the canvas under a 20% layer of black, so it
    is darker than the page in every theme. */
 :root {
   --page-max: 1440px;
@@ -98,12 +98,13 @@ body {
 }
 @media (min-width: 1441px) {
   html {
-    background: color-mix(in oklab, var(--bg-canvas) 93%, black);
+    background: color-mix(in srgb, var(--bg-canvas) 80%, black);
   }
   body {
     max-width: var(--page-max);
     min-height: calc(100dvh / var(--page-zoom));
     margin-inline: auto;
+    border-inline: 1px solid var(--rule);
     box-shadow:
       var(--sp-4) 0 var(--sp-8) calc(var(--sp-3) * -1) color-mix(in oklab, black 18%, transparent),
       calc(var(--sp-4) * -1) 0 var(--sp-8) calc(var(--sp-3) * -1) color-mix(in oklab, var(--bg-raised) 55%, transparent);
