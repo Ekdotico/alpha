@@ -49,7 +49,8 @@ const MAX_TOKEN = 2048;
 // site key in lib/turnstile.ts. Outside production only.
 const TEST_SECRET = '1x0000000000000000000000000000000AA';
 
-const BREVO_URL = 'https://api.brevo.com/v3/contacts/doubleOptinConfirmation';
+const BREVO_CONTACTS_URL = 'https://api.brevo.com/v3/contacts';
+const BREVO_URL = `${BREVO_CONTACTS_URL}/doubleOptinConfirmation`;
 const SITEVERIFY_URL = `${TURNSTILE_ORIGIN}/turnstile/v0/siteverify`;
 const UPSTREAM_TIMEOUT_MS = 8000;
 
@@ -59,9 +60,10 @@ const isProduction = () => process.env.NODE_ENV === 'production';
 
 // Every "check your inbox" looks the same to the reader, by design, so the log
 // is the only place that says which one it was: the trap, the address's own
-// limit, a new contact, or one Brevo already had (which it sends nothing to).
+// limit, a new contact, one Brevo already had on a list (which it sends nothing
+// to), or one it had on neither list, deleted and sent a fresh confirmation.
 // Never with the address, and never in the reader's answer.
-type OkPath = 'honeypot' | 'address-limit' | 'brevo-created' | 'brevo-existing';
+type OkPath = 'honeypot' | 'address-limit' | 'brevo-created' | 'brevo-existing' | 'brevo-recreated';
 function ok(path: OkPath): WaitlistResult {
   console.info(`[waitlist] ok: ${path}`);
   return { status: 'ok' };
@@ -159,28 +161,40 @@ async function requestDoubleOptIn(
     return { status: 'ok' };
   }
 
-  const res = await fetch(BREVO_URL, {
-    method: 'POST',
-    headers: { 'api-key': apiKey, 'content-type': 'application/json', accept: 'application/json' },
-    body: JSON.stringify({
-      email,
-      // Brevo applies these lists only on confirmation, so the testing list's
-      // automation never reaches an unconfirmed address.
-      includeListIds: testingListId ? [listId, testingListId] : [listId],
-      templateId,
-      redirectionUrl: absoluteUrl('/confirmed'),
-      // Held with the unconfirmed contact and written on confirmation, like the
-      // lists. Left out when empty, so a later signup with no link never
-      // clears one an earlier signup recorded.
-      ...(Object.keys(attributes).length > 0 ? { attributes } : {}),
-    }),
-    signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
-  });
+  const request = () =>
+    fetch(BREVO_URL, {
+      method: 'POST',
+      headers: brevoHeaders(apiKey),
+      body: JSON.stringify({
+        email,
+        // Brevo applies these lists only on confirmation, so the testing list's
+        // automation never reaches an unconfirmed address.
+        includeListIds: testingListId ? [listId, testingListId] : [listId],
+        templateId,
+        redirectionUrl: absoluteUrl('/confirmed'),
+        // Held with the unconfirmed contact and written on confirmation, like the
+        // lists. Left out when empty, so a later signup with no link never
+        // clears one an earlier signup recorded.
+        ...(Object.keys(attributes).length > 0 ? { attributes } : {}),
+      }),
+      signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
+    });
 
-  // 201 created, 204 an existing contact updated. Both are a success, and the
-  // second is deliberately indistinguishable from the first to the reader.
+  let res = await request();
+
+  // 201 created, 204 an existing contact updated. Brevo never emails a contact
+  // it already has, so a 204 for one on neither of our lists (removed from the
+  // list, or a reader who left and is signing up again) would send nothing.
+  // That contact is deleted and the request made once more, as a new one.
+  // Every path is the same "check your inbox" to the reader.
+  if (res.status === 204) {
+    const ours = [listId, brevoId('BREVO_TESTING_LIST_ID')].filter((id) => id !== null);
+    if (await onAnyList(apiKey, email, ours)) return ok('brevo-existing');
+    await deleteContact(apiKey, email);
+    res = await request();
+    if (res.status === 201) return ok('brevo-recreated');
+  }
   if (res.status === 201) return ok('brevo-created');
-  if (res.status === 204) return ok('brevo-existing');
 
   const detail = (await res.json().catch(() => ({}))) as { code?: string; message?: string };
   // Brevo is stricter than the schema about what it will deliver to.
@@ -189,6 +203,33 @@ async function requestDoubleOptIn(
   }
   // Logged without the address: the log is not where the list lives.
   throw new Error(`Brevo answered ${res.status} ${detail.code ?? ''}: ${detail.message ?? ''}`);
+}
+
+const brevoHeaders = (apiKey: string) => ({
+  'api-key': apiKey,
+  'content-type': 'application/json',
+  accept: 'application/json',
+});
+const contactUrl = (email: string) => `${BREVO_CONTACTS_URL}/${encodeURIComponent(email)}`;
+
+async function onAnyList(apiKey: string, email: string, listIds: number[]): Promise<boolean> {
+  const res = await fetch(contactUrl(email), {
+    headers: brevoHeaders(apiKey),
+    signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
+  });
+  if (res.status === 404) return false;
+  if (!res.ok) throw new Error(`Brevo contact lookup answered ${res.status}.`);
+  const contact = (await res.json()) as { listIds?: number[] };
+  return (contact.listIds ?? []).some((id) => listIds.includes(id));
+}
+
+async function deleteContact(apiKey: string, email: string): Promise<void> {
+  const res = await fetch(contactUrl(email), {
+    method: 'DELETE',
+    headers: brevoHeaders(apiKey),
+    signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
+  });
+  if (!res.ok && res.status !== 404) throw new Error(`Brevo contact delete answered ${res.status}.`);
 }
 
 /** Every failure that is ours rather than the reader's, in one answer. */

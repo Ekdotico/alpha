@@ -15,16 +15,26 @@ function form(fields: Record<string, string>): FormData {
 const headers = new Headers({ 'x-real-ip': '203.0.113.7' });
 const valid = { email: '  Reader@Example.org ', 'cf-turnstile-response': 'token' };
 
-type Call = { url: string; body: string };
+type Call = { url: string; method: string; body: string };
 let calls: Call[];
 
-function upstream(turnstile: object, brevoStatus: number, brevoBody: object = {}) {
+// `listIds` is what Brevo's contact lookup answers for an existing contact
+// (the list by default); a DOI request after a delete answers 201.
+function upstream(turnstile: object, brevoStatus: number, brevoBody: object = {}, listIds = [7]) {
   calls = [];
+  let deleted = false;
   vi.stubGlobal(
     'fetch',
-    vi.fn(async (url: string, init: RequestInit) => {
-      calls.push({ url, body: String(init.body) });
+    vi.fn(async (url: string, init: RequestInit = {}) => {
+      const method = init.method ?? 'GET';
+      calls.push({ url, method, body: String(init.body) });
       if (url.includes('siteverify')) return Response.json(turnstile);
+      if (method === 'GET') return Response.json({ listIds });
+      if (method === 'DELETE') {
+        deleted = true;
+        return new Response(null, { status: 204 });
+      }
+      if (deleted) return Response.json({}, { status: 201 });
       return brevoStatus === 204
         ? new Response(null, { status: 204 })
         : Response.json(brevoBody, { status: brevoStatus });
@@ -94,6 +104,28 @@ describe('joinWaitlist', () => {
   it('answers an address already on the list exactly as a new one', async () => {
     upstream({ success: true }, 204);
     expect(await joinWaitlist(form(valid), headers)).toEqual({ status: 'ok' });
+  });
+
+  it('sends nothing to a contact already on either list', async () => {
+    vi.stubEnv('BREVO_TESTING_LIST_ID', '9');
+    for (const listIds of [[7], [9], [2, 7]]) {
+      upstream({ success: true }, 204, {}, listIds);
+      expect(await joinWaitlist(form(valid), headers)).toEqual({ status: 'ok' });
+      expect(calls.map((c) => c.method)).toEqual(['POST', 'POST', 'GET']);
+    }
+  });
+
+  it('deletes a contact on neither list and asks Brevo again, so the confirmation is sent', async () => {
+    vi.stubEnv('BREVO_TESTING_LIST_ID', '9');
+    const info = vi.spyOn(console, 'info').mockImplementation(() => {});
+    for (const listIds of [[], [2]]) {
+      upstream({ success: true }, 204, {}, listIds);
+      expect(await joinWaitlist(form(valid), headers)).toEqual({ status: 'ok' });
+      expect(calls.slice(1).map((c) => c.method)).toEqual(['POST', 'GET', 'DELETE', 'POST']);
+      expect(calls[3].url).toBe('https://api.brevo.com/v3/contacts/reader%40example.org');
+      expect(JSON.parse(calls[4].body)).toMatchObject({ email: 'reader@example.org', templateId: 3 });
+      expect(info).toHaveBeenLastCalledWith('[waitlist] ok: brevo-recreated');
+    }
   });
 
   it('logs which success path a signup took, and never the address', async () => {
