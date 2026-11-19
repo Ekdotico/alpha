@@ -25,7 +25,6 @@ export default function PrivacyPage() {
     <>
       <main id="main-content" tabIndex={-1}>
         <section className="section" aria-labelledby="privacy-title">
-          <p className="section-eyebrow">Privacy</p>
           <h1 id="privacy-title" className="section-heading">How your address is kept</h1>
           <div className="section-body">
             <p>
