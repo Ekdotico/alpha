@@ -279,13 +279,14 @@ body {
   padding: 0 var(--sp-4);
   flex-shrink: 0;
 }
-/* The title and lede grow with the viewport through the package's fluid
-   tokens, which carry the ramps this hero settled on. An application never
+/* The title is one step above the lede at its largest, 1.5rem, and does not
+   grow. The lede grows with the viewport through the package's fluid token,
+   which carries the ramp this hero settled on. An application never
    writes its own clamp() for a font size (domico AGENTS.md, rule 2). */
 .hero-title {
   font-family: var(--font-serif);
   font-weight: var(--fw-regular);
-  font-size: var(--fs-display);
+  font-size: var(--fs-xl);
   line-height: var(--lh-tight);
   color: var(--fg-1);
   margin: 0 0 clamp(var(--sp-3), (2vh / var(--page-zoom)), var(--sp-6)) 0;
