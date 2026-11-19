@@ -17,7 +17,7 @@ export const RENDERED_MODES: readonly RenderedMode[] = ['light', 'dark'];
 export const HERO_ART_LARGE = '(min-width: 1289px) or ((min-width: 644px) and (min-resolution: 1.5dppx))';
 
 export function heroArtFile(mode: RenderedMode, large: boolean): string {
-  return `/hero/hero-v2-${mode}${large ? '' : '-1288'}.avif`;
+  return `/hero/hero-v3-${mode}${large ? '' : '-1288'}.avif`;
 }
 
 export interface HeroArtPreload {

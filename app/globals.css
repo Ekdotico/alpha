@@ -252,10 +252,10 @@ body {
    where the text stands in the picture's empty middle, the rule after
    .hero-art says how.
 
-   --hero-art-h is the picture's height: its own 2576 by 1098 shape at the
+   --hero-art-h is the picture's height: its own 2576 by 1104 shape at the
    page's width. */
 .hero {
-  --hero-art-h: calc(var(--page-w) * 1098 / 2576);
+  --hero-art-h: calc(var(--page-w) * 1104 / 2576);
   position: relative;
   width: 100%;
   min-height: calc((100dvh / var(--page-zoom)) - var(--chrome-h));
@@ -312,10 +312,12 @@ body {
   background: var(--hero-art) center bottom / 100% auto no-repeat;
 }
 /* From 1100px the text stands in the picture's empty middle. Measured on the
-   picture: between 32% and 68% of its width nothing is drawn in its upper
-   half (the wizard's hat ends at 26%, the stair rail and its plants begin at
-   68%), so the column is 40% of the page (the owner widened it from 36% on 19 November 2026; checked clear of the drawing at 1100, 1440 and 2400 wide) and ends at half the picture's
-   height. Below 1100px that column would be under 400px, and the base rule
+   picture (v3, 20 November 2026): between 32% and 70% of its width nothing
+   is drawn in its upper half (the terraces' last trees end at 32%, the houses
+   under the tower begin at 71%), so the column is 40% of the page (the owner
+   widened it from 36% on 19 November 2026; its text and form checked clear of
+   the drawing at 1100, 1440 and 2400 wide, in both modes) and ends at half the
+   picture's height. Below 1100px that column would be under 400px, and the base rule
    keeps the text above the whole picture instead. */
 @media (min-width: 1100px) {
   .hero { padding-bottom: calc(var(--hero-art-h) * 0.5); }
@@ -335,17 +337,17 @@ body {
    default, dark when chosen, and dark under the system's preference when the
    reader has chosen neither. Only the mode chooses; every theme has both. */
 .hero {
-  --hero-art: url('/hero/hero-v2-light-1288.avif');
-  --hero-art-lg: url('/hero/hero-v2-light.avif');
+  --hero-art: url('/hero/hero-v3-light-1288.avif');
+  --hero-art-lg: url('/hero/hero-v3-light.avif');
 }
 [data-mode="dark"] .hero {
-  --hero-art: url('/hero/hero-v2-dark-1288.avif');
-  --hero-art-lg: url('/hero/hero-v2-dark.avif');
+  --hero-art: url('/hero/hero-v3-dark-1288.avif');
+  --hero-art-lg: url('/hero/hero-v3-dark.avif');
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-mode]) .hero {
-    --hero-art: url('/hero/hero-v2-dark-1288.avif');
-    --hero-art-lg: url('/hero/hero-v2-dark.avif');
+    --hero-art: url('/hero/hero-v3-dark-1288.avif');
+    --hero-art-lg: url('/hero/hero-v3-dark.avif');
   }
 }
 /* A picture on a page colour that forced colours has replaced, or on paper,
