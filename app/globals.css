@@ -274,14 +274,13 @@ body {
   padding: 0 var(--sp-4);
   flex-shrink: 0;
 }
-/* The title is one step above the lede at its largest, 1.5rem, and does not
-   grow. The lede grows with the viewport through the package's fluid token,
-   which carries the ramp this hero settled on. An application never
+/* The title and lede grow with the viewport through the package's fluid
+   tokens, and take fixed steps from 1100px (below). An application never
    writes its own clamp() for a font size (domico AGENTS.md, rule 2). */
 .hero-title {
   font-family: var(--font-serif);
   font-weight: var(--fw-regular);
-  font-size: var(--fs-xl);
+  font-size: var(--fs-display);
   line-height: var(--lh-tight);
   color: var(--fg-1);
   margin: 0 0 clamp(var(--sp-3), (2vh / var(--page-zoom)), var(--sp-6)) 0;
@@ -321,6 +320,11 @@ body {
 @media (min-width: 1100px) {
   .hero { padding-bottom: calc(var(--hero-art-h) * 0.5); }
   .hero-body { width: min(var(--content-w), var(--page-w) * 0.36); }
+  /* The sizes the owner set, 19 November 2026: the title 3rem and the lede
+     half of it. Below 1100px both keep their fluid tokens, where 3rem would
+     run the title to six lines. */
+  .hero-title { font-size: var(--fs-4xl); }
+  .hero-lede { font-size: var(--fs-xl); }
 }
 /* The 2576-wide files, where the 1288-wide ones would be stretched. The same
    query is HERO_ART_LARGE in lib/hero-art.ts, which preloads the picture. */
