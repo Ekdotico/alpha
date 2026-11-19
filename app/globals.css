@@ -314,17 +314,17 @@ body {
 /* From 1100px the text stands in the picture's empty middle. Measured on the
    picture: between 32% and 68% of its width nothing is drawn in its upper
    half (the wizard's hat ends at 26%, the stair rail and its plants begin at
-   68%), so the column is 36% of the page and ends at half the picture's
+   68%), so the column is 40% of the page (the owner widened it from 36% on 19 November 2026; checked clear of the drawing at 1100, 1440 and 2400 wide) and ends at half the picture's
    height. Below 1100px that column would be under 400px, and the base rule
    keeps the text above the whole picture instead. */
 @media (min-width: 1100px) {
   .hero { padding-bottom: calc(var(--hero-art-h) * 0.5); }
-  .hero-body { width: min(var(--content-w), var(--page-w) * 0.36); }
-  /* The sizes the owner set, 19 November 2026: the title 3rem and the lede
-     half of it. Below 1100px both keep their fluid tokens, where 3rem would
-     run the title to six lines. */
+  .hero-body { width: min(var(--content-w), var(--page-w) * 0.4); }
+  /* The sizes the owner set, 19 November 2026: the title 3rem, and the lede
+     one step above a paragraph. Below 1100px the title keeps its fluid
+     token, where 3rem would run it to six lines. */
   .hero-title { font-size: var(--fs-4xl); }
-  .hero-lede { font-size: var(--fs-xl); }
+  .hero-lede { font-size: var(--fs-lg); }
 }
 /* The 2576-wide files, where the 1288-wide ones would be stretched. The same
    query is HERO_ART_LARGE in lib/hero-art.ts, which preloads the picture. */
