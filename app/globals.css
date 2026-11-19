@@ -504,6 +504,17 @@ html:has(.alpha-notice) {
   }
   .waitlist-info--testing { position-anchor: --waitlist-testing-mark; }
 }
+/* The same place without anchor positioning (Safari before 26): WaitlistForm
+   measures the anchor and writes its top, right edge and height here. */
+.waitlist-info[data-placed] {
+  top: var(--mark-top);
+  right: auto;
+  left: calc(var(--mark-right) + var(--sp-2) * 0.75);
+  height: var(--mark-height);
+  margin-top: calc(var(--sp-1) / 2);
+  display: inline-flex;
+  align-items: center;
+}
 /* The honeypot. Off-screen rather than display: none, which some bots read as
    a cue to leave the field empty; kept out of the tab order and the
    accessibility tree by the attributes on the element itself. */

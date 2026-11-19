@@ -148,8 +148,38 @@ function WaitlistFields({
     if (state && widget.current) window.turnstile?.reset(widget.current);
   }, [state]);
 
+  // Where the browser has no anchor positioning (Safari before 26), each info
+  // mark is measured against the empty span that ends its label and given the
+  // same place as lengths (.waitlist-info[data-placed] in globals.css). The
+  // lengths are divided by the page's zoom, which a measured box includes.
+  const form = useRef<HTMLFormElement>(null);
+  useEffect(() => {
+    const element = form.current;
+    if (!element || CSS.supports('anchor-name', '--mark')) return;
+    const place = () => {
+      for (const mark of element.querySelectorAll<HTMLElement>('.waitlist-mark')) {
+        const box = mark.closest<HTMLElement>('.waitlist-address, .waitlist-testing');
+        const info = box?.querySelector<HTMLElement>('.waitlist-info');
+        if (!box || !info) continue;
+        const of = box.getBoundingClientRect();
+        const at = mark.getBoundingClientRect();
+        const zoom = of.width / box.offsetWidth || 1;
+        info.style.setProperty('--mark-top', `${(at.top - of.top) / zoom}px`);
+        info.style.setProperty('--mark-right', `${(at.right - of.left) / zoom}px`);
+        info.style.setProperty('--mark-height', `${at.height / zoom}px`);
+        info.dataset.placed = '';
+      }
+    };
+    place();
+    // The label wraps anew at another width, and moves when the web font arrives.
+    const watch = new ResizeObserver(place);
+    watch.observe(element);
+    void document.fonts.ready.then(place);
+    return () => watch.disconnect();
+  }, []);
+
   return (
-    <form className="waitlist" action={formAction} onSubmit={captureSource}>
+    <form ref={form} className="waitlist" action={formAction} onSubmit={captureSource}>
       <div className="waitlist-row">
         <div className="waitlist-address">
         {/* What is sent is said behind the info mark on the label's line. The
