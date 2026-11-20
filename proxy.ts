@@ -23,7 +23,12 @@ import { TURNSTILE_ORIGIN } from '@/lib/turnstile';
 export const config = {
   // Exact file names, each anchored with `$`, so an excluded path cannot be
   // widened to whatever a request spells after it.
-  matcher: ['/((?!_next/|favicon\\.ico$|apple-icon\\.png$|icon\\.svg$|robots\\.txt$|og\\.png$).*)'],
+  //
+  // /status is not ours: it is the status page of the `app` project, rewritten
+  // in next.config.ts. It loads its own scripts without a nonce and reads
+  // Healthchecks.io from the browser, so this site's nonce policy would block
+  // it. It carries no form and no personal data.
+  matcher: ['/((?!_next/|status(?:/|$)|favicon\\.ico$|apple-icon\\.png$|icon\\.svg$|robots\\.txt$|og\\.png$).*)'],
 };
 
 const CSP_HEADER_NAME = 'Content-Security-Policy';
