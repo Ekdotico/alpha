@@ -16,6 +16,15 @@ const nextConfig: NextConfig = {
     root: path.resolve(__dirname),
   },
 
+  // /status is the status page of the small `app` project that serves
+  // ekdoti.co, which stays its one source. It is served here under this host
+  // (the address bar keeps alpha.ekdoti.co), page and files alike: the page
+  // names its stylesheets and scripts as /status/*. Nothing is copied. `app`
+  // redirects every path except /status, so this cannot loop.
+  async rewrites() {
+    return [{ source: '/status/:path*', destination: 'https://ekdoti.co/status/:path*' }];
+  },
+
   // The static security headers on every route come from the shared set, so
   // this site sends the same five as deree, docs and praktico. The
   // Content-Security-Policy carries a per-request nonce, which a static
