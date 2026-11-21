@@ -77,8 +77,9 @@ export default function PrivacyPage() {
               given when you send the form and again when you open the confirmation link. You can
               withdraw it at any time through the unsubscribe link in any of our emails. For the
               spam check and for recording where you signed up from, our legitimate interest in
-              keeping the form working and in knowing which posts reach people. You can object to
-              either by writing to us.
+              keeping the form working and in knowing which posts reach people. For counting
+              visits, our legitimate interest in knowing whether the site and its form work. You
+              can object to any of these by writing to us.
             </p>
             <p>
               <em>Who else handles it.</em> Service providers who process it for us and on our

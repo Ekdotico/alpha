@@ -44,6 +44,22 @@ describe('the privacy page, counting visits', () => {
     expect(handled).toContain(`the provider that hosts this site; ${PROCESSOR_CLAUSE} and a spam-check service`);
   });
 
+  // The owner's approved basis sentence, and the changed last sentence, with
+  // everything else in the paragraph as it was.
+  it('states the basis for counting, and lets the reader object to any of the three', () => {
+    const why = paragraphs().find((p) => p.startsWith('Why we may hold it.')) ?? '';
+    expect(why).toBe(
+      'Why we may hold it. For the waitlist and the testing email, your consent, given when you send the form and again when you open the confirmation link. You can withdraw it at any time through the unsubscribe link in any of our emails. For the spam check and for recording where you signed up from, our legitimate interest in keeping the form working and in knowing which posts reach people. For counting visits, our legitimate interest in knowing whether the site and its form work. You can object to any of these by writing to us.',
+    );
+  });
+
+  it('leaves the retention paragraph and the date as they were', () => {
+    const all = paragraphs();
+    expect(all).toContain(
+      'How long. Your address is kept until you unsubscribe or ask us to delete it, and no longer than the waitlist is needed for news of the opening; the testing list closes when testing ends, or with the waitlist. Records used to stop the form being misused are short-lived and deleted automatically.',
+    );
+  });
+
   it('leaves the cookie paragraph exactly as it was', () => {
     expect(paragraphs()).toContain(COOKIES);
   });
