@@ -1,18 +1,12 @@
-import { appearanceState } from '@ekdotico/domico/theme/server';
-import { cookies } from 'next/headers';
 import { WaitlistForm } from '@/components/alpha/WaitlistForm';
-import { heroArtPreloads } from '@/lib/hero-art';
 
-export async function Hero() {
-  const preloads = heroArtPreloads(appearanceState(await cookies()));
-
+export function Hero() {
   return (
     <section className="hero" aria-labelledby="hero-title">
-      {/* React lifts these into the head. The illustration is a CSS background,
-          which the browser would otherwise find only after the stylesheet. */}
-      {preloads.map(({ href, media }) => (
-        <link key={href} rel="preload" as="image" type="image/avif" href={href} media={media} fetchPriority="high" />
-      ))}
+      {/* The room the large lockup stands in. The lockup itself is the header's
+          (HeaderLogo), which carries it from here into the bar as the page
+          scrolls; this is only the gap it leaves, and hidden from a screen reader. */}
+      <div id="hero-lockup-slot" className="hero-lockup-slot" aria-hidden="true" />
       <div className="hero-body">
         <h1 id="hero-title" className="hero-title">
           A writing environment for theses, dissertations, and research articles
@@ -26,10 +20,6 @@ export async function Hero() {
         </p>
         <WaitlistForm />
       </div>
-      {/* Decoration only: a background on an empty element, so a screen reader
-          meets nothing here. It lies along the hero's lower edge; the
-          padding in globals.css keeps the text off its drawn parts. */}
-      <div className="hero-art" aria-hidden="true" />
     </section>
   );
 }

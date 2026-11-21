@@ -63,8 +63,20 @@
      for a single control's height would fork the scale to buy back 4px. */
   --site-header-h: calc(var(--sp-3) * 2 + var(--sp-8) + 1px); /* 2×padding + content row ceiling + border */
   --chrome-h: var(--site-header-h);
+  /* Where the hero's large lockup stands: this far under the header. The hero's
+     top padding and the lockup, which is the header's, both read it, so the two
+     cannot drift apart. */
+  --hero-pad: clamp(var(--sp-6), (6vh / var(--page-zoom)), var(--sp-10));
+  /* The large lockup's size. The slot, the lockup and its travel all read it.
+     On a phone it is 30% smaller, so the lockup does not outweigh the title. */
+  --hero-lockup-fs: var(--fs-5xl);
   /* How large the page is drawn: 1, or 1.5 on a very wide screen (below). */
   --page-zoom: 1;
+}
+@media (max-width: 520px) {
+  :root {
+    --hero-lockup-fs: calc(var(--fs-5xl) * 0.7);
+  }
 }
 
 /* A 27-inch monitor at 2560 wide leaves every page a narrow strip of small
@@ -141,20 +153,89 @@ body {
 .site-header .logo {
   font-size: var(--fs-lg);
 }
-/* The lockup as a link home, off the homepage. It keeps the lockup's look: no
-   underline, and the colour the lockup sets itself. The focus ring is the
-   document's. */
+/* The header lockup, one object. It is the page's only lockup: large and
+   centred over the hero's slot at the top of the page, bar-sized at the left of
+   the bar once the reader has scrolled, and travelling between the two.
+
+   It stands out of the row (position: absolute) so the large state never moves
+   the badge or the appearance control; the row keeps its width with a hidden
+   copy of the bar-sized lockup (.site-header-logo-slot), which is aria-hidden
+   and takes no focus. So the bar does not shift when the lockup docks.
+
+   Two states, as a set of properties that interpolate:
+     docked — left of the bar, vertically centred in it, at --fs-lg. The default,
+              and the whole of every page but the homepage.
+     hero   — centred on the bar's inner width, --hero-pad below the bar, at
+              --fs-5xl (the size of the hero's slot).
+   Where the browser has scroll-driven animations the travel is bound to the
+   scroll position and needs no script. Elsewhere HeaderLogo sets data-hero on
+   the header while the slot is on screen and the two states are joined by a
+   transition. Reduced motion has neither: the lockup is in one state or the
+   other. */
+.site-header-inner { position: relative; }
+.site-header-logo-slot {
+  visibility: hidden;
+  display: inline-flex;
+  font-size: var(--fs-lg);
+}
 .site-header-home {
+  position: absolute;
+  left: var(--sp-4);
+  top: 50%;
+  translate: 0 -50%;
   display: inline-flex;
   color: inherit;
   text-decoration: none;
+  font-size: var(--fs-lg);
 }
-.site-header-domain {
-  font-family: var(--font-mono);
-  font-size: var(--fs-sm);
-  color: var(--fg-3);
-  margin-left: auto;
+.site-header-home .logo { font-size: inherit; }
+.site-header-home[data-hero] {
+  left: 50%;
+  top: calc(100% + var(--hero-pad));
+  translate: -50% 0;
+  font-size: var(--hero-lockup-fs);
 }
+@media (prefers-reduced-motion: no-preference) {
+  .site-header-home {
+    transition:
+      left var(--dur-slow) var(--ease-soft),
+      top var(--dur-slow) var(--ease-soft),
+      translate var(--dur-slow) var(--ease-soft),
+      font-size var(--dur-slow) var(--ease-soft);
+  }
+}
+@keyframes lockup-travel {
+  from {
+    left: 50%;
+    top: calc(100% + var(--hero-pad));
+    translate: -50% 0;
+    font-size: var(--hero-lockup-fs);
+  }
+  to {
+    left: var(--sp-4);
+    top: 50%;
+    translate: 0 -50%;
+    font-size: var(--fs-lg);
+  }
+}
+/* The travel covers the scroll it takes the slot to leave the bar: the pad and
+   the slot's height. Bound to the page's scroll, so it is the reader's hand that
+   moves it, and it is the same object throughout. */
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .site-header-home[data-travel] {
+      transition: none;
+      left: var(--sp-4);
+      top: 50%;
+      translate: 0 -50%;
+      font-size: var(--fs-lg);
+      animation: lockup-travel linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 0 calc(var(--hero-pad) + var(--hero-lockup-fs));
+    }
+  }
+}
+
 /* The appearance control. Only its place in the row is stated here; the trigger,
    the panel, and the panel's anchoring are all styled by
    @ekdotico/domico/styles/appearance.css, so this control reads and behaves
@@ -173,6 +254,7 @@ body {
   flex: none;
 }
 .site-header-badge {
+  margin-left: auto;
   font-family: var(--font-sans);
   font-size: var(--fs-sm);
   /* 0.12em is --tr-label, which the package has stated all along and which
@@ -243,33 +325,39 @@ body {
    this site ever wants a section break it should render <SectionRule /> from
    @ekdotico/domico/components rather than redraw one. */
 
-/* Hero. One screen: the header and the hero together are the viewport's height
-   wherever the text, the form and the picture fit in it, and the hero grows
-   rather than clips where they do not (a phone, a short window).
+/* Hero. One centred column on the page colour: the lockup, the title, the
+   lede and the form, each a step of the spacing scale from the next. It is one
+   screen tall wherever the column fits, and grows where it does not.
 
-   The illustration lies along the hero's lower edge. The text never meets it:
-   the padding under the text is the picture's whole height, and from 1100px,
-   where the text stands in the picture's empty middle, the rule after
-   .hero-art says how.
+   The lockup in the column is a reserved gap (.hero-lockup-slot); the lockup
+   itself belongs to the header (HeaderLogo, below) and stands over the gap
+   until the reader scrolls. The column is therefore top-aligned: the lockup's
+   place is stated once, as --hero-pad under the header, and the slot, which
+   holds the lockup's space, and the lockup, which stands in it, both read it.
 
-   --hero-art-h is the picture's height: its own 2576 by 1104 shape at the
-   page's width. */
+   The hero-pad figure is in the :root block above with the other chrome
+   geometry. */
 .hero {
-  --hero-art-h: calc(var(--page-w) * 1104 / 2576);
   position: relative;
   width: 100%;
   min-height: calc((100dvh / var(--page-zoom)) - var(--chrome-h));
-  padding: clamp(var(--sp-5), (3vh / var(--page-zoom)), var(--sp-9)) 0 calc(var(--hero-art-h) + var(--sp-5));
+  padding: var(--hero-pad) 0 var(--sp-10);
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   box-sizing: border-box;
 }
+/* The room the large lockup stands in. One em of its own size, which is the
+   lockup's tile, plus the tile's drop below the baseline. Not a lockup: a screen
+   reader and a keyboard meet nothing here. */
+.hero-lockup-slot {
+  font-size: var(--hero-lockup-fs);
+  height: 1.2em;
+  margin-bottom: var(--sp-7);
+  flex: none;
+}
 .hero-body {
-  position: relative;
-  z-index: 1;
   width: min(var(--content-w), (var(--page-w) * 0.9));
   padding: 0 var(--sp-4);
   flex-shrink: 0;
@@ -283,78 +371,26 @@ body {
   font-size: var(--fs-display);
   line-height: var(--lh-tight);
   color: var(--fg-1);
-  margin: 0 0 clamp(var(--sp-3), (2vh / var(--page-zoom)), var(--sp-6)) 0;
+  margin: 0 0 var(--sp-5) 0;
+  text-wrap: balance;
 }
 .hero-lede {
   font-family: var(--font-sans);
   font-size: var(--fs-lede);
   line-height: var(--lh-prose);
   color: var(--fg-2);
-  margin: 0 auto;
+  margin: 0 auto var(--sp-7);
   max-width: var(--measure);
   /* Balance, not the package's pretty: pretty still left the last word of a
      centred lede on a line of its own. Balanced lines leave no short last line. */
   text-wrap: balance;
 }
-
-/* The hero illustration: one picture for the light mode and one for the dark,
-   transparent, drawn straight on the page colour along the foot of the hero
-   with nothing over it. It is a background on one empty, aria-hidden element.
-
-   The box's height is --hero-art-h, stated on .hero, so the space is reserved
-   before the file arrives and nothing moves when it does.
-
-   Nothing here moves, so there is nothing to switch off for reduced motion. */
-.hero-art {
-  position: absolute;
-  inset: auto 0 0 0;
-  height: var(--hero-art-h);
-  background: var(--hero-art) center bottom / 100% auto no-repeat;
-}
-/* From 1100px the text stands in the picture's empty middle. Measured on the
-   picture (v3, 20 November 2026): between 32% and 70% of its width nothing
-   is drawn in its upper half (the terraces' last trees end at 32%, the houses
-   under the tower begin at 71%), so the column is 40% of the page (the owner
-   widened it from 36% on 19 November 2026; its text and form checked clear of
-   the drawing at 1100, 1440 and 2400 wide, in both modes) and ends at half the
-   picture's height. Below 1100px that column would be under 400px, and the base rule
-   keeps the text above the whole picture instead. */
 @media (min-width: 1100px) {
-  .hero { padding-bottom: calc(var(--hero-art-h) * 0.5); }
-  .hero-body { width: min(var(--content-w), var(--page-w) * 0.4); }
-  /* The sizes the owner set, 19 November 2026: the title 3rem, and the lede
-     one step above a paragraph. Below 1100px the title keeps its fluid
-     token, where 3rem would run it to six lines. */
   .hero-title { font-size: var(--fs-4xl); }
   .hero-lede { font-size: var(--fs-lg); }
-}
-/* The 2576-wide files, where the 1288-wide ones would be stretched. The same
-   query is HERO_ART_LARGE in lib/hero-art.ts, which preloads the picture. */
-@media (min-width: 1289px) or ((min-width: 644px) and (min-resolution: 1.5dppx)) {
-  .hero-art { background-image: var(--hero-art-lg); }
-}
-/* Which files, under the selectors tokens.css uses for the mode: light by
-   default, dark when chosen, and dark under the system's preference when the
-   reader has chosen neither. Only the mode chooses; every theme has both. */
-.hero {
-  --hero-art: url('/hero/hero-v3-light-1288.avif');
-  --hero-art-lg: url('/hero/hero-v3-light.avif');
-}
-[data-mode="dark"] .hero {
-  --hero-art: url('/hero/hero-v3-dark-1288.avif');
-  --hero-art-lg: url('/hero/hero-v3-dark.avif');
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-mode]) .hero {
-    --hero-art: url('/hero/hero-v3-dark-1288.avif');
-    --hero-art-lg: url('/hero/hero-v3-dark.avif');
-  }
-}
-/* A picture on a page colour that forced colours has replaced, or on paper,
-   is noise. Both get the hero without it. */
-@media (forced-colors: active), print {
-  .hero { padding-bottom: var(--sp-6); }
-  .hero-art { display: none; }
+  .hero-lockup-slot { margin-bottom: var(--sp-8); }
+  .hero-title { margin-bottom: var(--sp-6); }
+  .hero-lede { margin-bottom: var(--sp-8); }
 }
 
 /* The release status (AlphaNotice): a bar along the foot of the window, in the
@@ -584,22 +620,4 @@ html:has(.alpha-notice) {
   /* Field above button: side by side, the address would get a third of a
      phone's width. */
   .waitlist-row { flex-direction: column; align-items: stretch; }
-
-  /* Drop the domain label from the header row on phones. The appearance trigger
-     is a fixed 36px and does not shrink, so at 375px the row measured flush to
-     the viewport and the badge — the one item in it that can shrink — wrapped
-     "Pre-launch" onto a second line, taking the header from 61px to 67px.
-
-     The domain is what goes, because it is the one thing in the row that is
-     said twice already: the wordmark beside it reads "Ekdotico" and the address
-     bar above it reads the domain. Nothing is lost at this width that the
-     reader cannot see without it. */
-  .site-header-domain { display: none; }
-
-  /* The auto margin that right-aligns the tail of the row lives on the domain,
-     and display: none takes an element out of layout margins and all — so
-     hiding it alone left the badge and the trigger sitting against the logo,
-     with the trigger 85px short of the right edge. The badge is the first item
-     of the tail at this width, so it inherits the job. */
-  .site-header-badge { margin-left: auto; }
 }
