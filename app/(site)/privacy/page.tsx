@@ -57,6 +57,18 @@ export default function PrivacyPage() {
               your address, and nothing is stored in your browser for it.
             </p>
             <p>
+              <em>Counting visits.</em> To learn how many people read this site and whether the
+              form works, each page you open sends one short message to a measurement service. It
+              says which page was opened (the home page, this page, the confirmation page, or
+              another) and carries what your browser sends with any request, such as its name and
+              version. When you send the form, a second message says whether it worked or failed,
+              and never the address you entered. Nothing is stored in your browser for this. The
+              messages of one visit share a random number that lasts only while the page is open,
+              so there is no identifier that lasts beyond the page, and nothing links one visit to
+              the next. The service does not receive your network address; it sees only that of
+              the provider that hosts this site, and works out no location.
+            </p>
+            <p>
               <em>Who holds it.</em> The Ekdotico team, reachable at{' '}
               <a href={`mailto:${SITE_META.contact}`}>{SITE_META.contact}</a>.
             </p>
@@ -72,7 +84,9 @@ export default function PrivacyPage() {
               <em>Who else handles it.</em> Service providers who process it for us and on our
               instructions: an email service in the European Union, which stores the waitlist,
               sends its emails, and records when and from which network address you confirmed, as
-              evidence of your consent; the provider that hosts this site; and a spam-check
+              evidence of your consent; the provider that hosts this site; a measurement service
+              in the European Union, which receives the messages described under
+              &quot;Counting visits&quot; through this site&apos;s own address; and a spam-check
               service, which looks at your browser and network address to tell a person from a
               program. Where any of them may process data outside the European Union, safeguards
               recognised by the GDPR, such as standard contractual clauses, apply. You can ask us
