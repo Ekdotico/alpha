@@ -64,6 +64,11 @@ const LIMITERS = {
   'client-day': limiter('rl:waitlist:client-day', 10, '24 h'),
   address: limiter('rl:waitlist:address', 3, '24 h'),
   global: limiter('rl:waitlist:global', 250, '24 h'),
+  //   ingest   120 analytics posts a minute per address of origin (the forward
+  //            at /ingest). A page sends a handful; this stops the path being
+  //            used as a free relay. The window is a minute, so the key is gone
+  //            a minute later, well inside the day the other buckets keep.
+  ingest: limiter('rl:ingest:client', 120, '1 m'),
 };
 
 export type LimitScope = keyof typeof LIMITERS;
@@ -87,6 +92,15 @@ async function consume(scope: LimitScope, identifier: string): Promise<LimitDeci
   // as success: true with reason "timeout". That is the library failing open;
   // here a signup that was not counted is a signup that is refused.
   return { allowed: res.success && res.reason !== 'timeout', scope };
+}
+
+/**
+ * Count one analytics post from this client (app/ingest). Throws in production
+ * when the store is not configured, and answers not-allowed when it does not
+ * answer in time; the forward turns both into a refusal that sends nothing.
+ */
+export async function consumeIngest(headers: Headers): Promise<LimitDecision> {
+  return consume('ingest', clientKey(headers));
 }
 
 /** Count one signup from this client. Checked before the Turnstile call. */

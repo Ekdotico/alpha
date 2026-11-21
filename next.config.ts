@@ -4,6 +4,10 @@ import { STATIC_HEADERS } from '@ekdotico/amyntico/headers';
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  // PostHog's paths end in a slash (/ingest/e/), and a POST that is redirected
+  // to the slashless form loses its body. The setting also stops the redirect
+  // that adds or removes a trailing slash on any page.
+  skipTrailingSlashRedirect: true,
   poweredByHeader: false,
   // `next upgrade --agent` with no type moves this site only when the
   // installed release has a published security advisory.
