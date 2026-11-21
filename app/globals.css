@@ -67,8 +67,16 @@
      top padding and the lockup, which is the header's, both read it, so the two
      cannot drift apart. */
   --hero-pad: clamp(var(--sp-6), (6vh / var(--page-zoom)), var(--sp-10));
+  /* The large lockup's size. The slot, the lockup and its travel all read it.
+     On a phone it is 30% smaller, so the lockup does not outweigh the title. */
+  --hero-lockup-fs: var(--fs-5xl);
   /* How large the page is drawn: 1, or 1.5 on a very wide screen (below). */
   --page-zoom: 1;
+}
+@media (max-width: 520px) {
+  :root {
+    --hero-lockup-fs: calc(var(--fs-5xl) * 0.7);
+  }
 }
 
 /* A 27-inch monitor at 2560 wide leaves every page a narrow strip of small
@@ -185,7 +193,7 @@ body {
   left: 50%;
   top: calc(100% + var(--hero-pad));
   translate: -50% 0;
-  font-size: var(--fs-5xl);
+  font-size: var(--hero-lockup-fs);
 }
 @media (prefers-reduced-motion: no-preference) {
   .site-header-home {
@@ -201,7 +209,7 @@ body {
     left: 50%;
     top: calc(100% + var(--hero-pad));
     translate: -50% 0;
-    font-size: var(--fs-5xl);
+    font-size: var(--hero-lockup-fs);
   }
   to {
     left: var(--sp-4);
@@ -223,7 +231,7 @@ body {
       font-size: var(--fs-lg);
       animation: lockup-travel linear both;
       animation-timeline: scroll(root block);
-      animation-range: 0 calc(var(--hero-pad) + var(--fs-5xl));
+      animation-range: 0 calc(var(--hero-pad) + var(--hero-lockup-fs));
     }
   }
 }
@@ -344,7 +352,7 @@ body {
    lockup's tile, plus the tile's drop below the baseline. Not a lockup: a screen
    reader and a keyboard meet nothing here. */
 .hero-lockup-slot {
-  font-size: var(--fs-5xl);
+  font-size: var(--hero-lockup-fs);
   height: 1.2em;
   margin-bottom: var(--sp-7);
   flex: none;
