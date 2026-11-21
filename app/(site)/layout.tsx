@@ -1,4 +1,5 @@
 import { AlphaNotice } from '@/components/alpha/AlphaNotice';
+import { AnalyticsPageView } from '@/components/alpha/AnalyticsPageView';
 import { InPageLinks } from '@/components/alpha/InPageLinks';
 import { SiteHeader } from '@/components/alpha/SiteHeader';
 import { OpeningSequence, SkipLink } from '@ekdotico/domico/components';
@@ -18,6 +19,7 @@ export default function SiteLayout({
     <>
       <SkipLink />
       <AlphaNotice />
+      <AnalyticsPageView />
       <OpeningSequence />
       <InPageLinks />
       <SiteHeader />

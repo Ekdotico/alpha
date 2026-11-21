@@ -28,7 +28,10 @@ export const config = {
   // in next.config.ts. It loads its own scripts without a nonce and reads
   // Healthchecks.io from the browser, so this site's nonce policy would block
   // it. It carries no form and no personal data.
-  matcher: ['/((?!_next/|status(?:/|$)|favicon\\.ico$|apple-icon\\.png$|icon\\.svg$|robots\\.txt$|og\\.png$).*)'],
+  //
+  // /ingest is the analytics forward (app/ingest). It returns no page, so it
+  // takes no policy; this site has no gate, so nothing here redirects it.
+  matcher: ['/((?!_next/|ingest(?:/|$)|status(?:/|$)|favicon\\.ico$|apple-icon\\.png$|icon\\.svg$|robots\\.txt$|og\\.png$).*)'],
 };
 
 const CSP_HEADER_NAME = 'Content-Security-Policy';

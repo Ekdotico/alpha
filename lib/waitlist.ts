@@ -28,7 +28,7 @@ import { TURNSTILE_ACTION, TURNSTILE_ORIGIN } from '@/lib/turnstile';
 export type WaitlistResult =
   | { status: 'ok' }
   | { status: 'invalid'; message: string }
-  | { status: 'refused'; message: string };
+  | { status: 'refused'; message: string; limited?: true };
 
 const MESSAGES = {
   check:
@@ -98,7 +98,7 @@ export async function joinWaitlist(form: FormData, headers: Headers): Promise<Wa
   }
 
   // 3.
-  if (!(await consumeClient(headers)).allowed) return { status: 'refused', message: MESSAGES.client };
+  if (!(await consumeClient(headers)).allowed) return { status: 'refused', message: MESSAGES.client, limited: true };
 
   // 4.
   if (!(await verifyTurnstile(token, clientIp(headers)))) {
@@ -109,7 +109,7 @@ export async function joinWaitlist(form: FormData, headers: Headers): Promise<Wa
   // already been sent a link today, and saying more would confirm the address.
   const send = await consumeSend(email);
   if (!send.allowed) {
-    return send.scope === 'global' ? { status: 'refused', message: MESSAGES.global } : ok('address-limit');
+    return send.scope === 'global' ? { status: 'refused', message: MESSAGES.global, limited: true } : ok('address-limit');
   }
 
   // 6.

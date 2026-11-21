@@ -5,6 +5,7 @@ import { type FormEvent, useActionState, useEffect, useId, useRef, useState } fr
 import { Button, Checkbox, FormFault, TextField, Tooltip } from '@ekdotico/domico/components';
 import { InfoIcon } from '@ekdotico/domico/icons';
 import { submitWaitlist, type WaitlistState } from '@/app/(site)/actions';
+import { capture, outcomeOf } from '@/lib/analytics';
 import { ATTRIBUTION_FIELDS, cleanAttribution, referrerHost, UTM_PARAMS } from '@/lib/attribution';
 import { TURNSTILE_ACTION, TURNSTILE_SCRIPT, turnstileSiteKey } from '@/lib/turnstile';
 
@@ -81,6 +82,11 @@ const TESTING_HINT =
 
 export function WaitlistForm({ headingLevel = 2 }: { headingLevel?: 2 | 3 }) {
   const [state, formAction] = useActionState(submitWaitlist, null);
+
+  // Counts how a submission ended: one of five names, never the address.
+  useEffect(() => {
+    if (state) capture({ name: 'waitlist_submit', props: { outcome: outcomeOf(state) } });
+  }, [state]);
 
   if (state?.status === 'ok') {
     return (
