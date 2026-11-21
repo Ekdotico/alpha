@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 // project can keep without effort, or one the GDPR makes anyway.
 //
 // Change UPDATED with any change of substance.
-const UPDATED = '28 October 2026';
+const UPDATED = '21 November 2026';
 
 export default function PrivacyPage() {
   return (
@@ -97,7 +97,8 @@ export default function PrivacyPage() {
               <em>How long.</em> Your address is kept until you unsubscribe or ask us to delete
               it, and no longer than the waitlist is needed for news of the opening; the testing list
               closes when testing ends, or with the waitlist. Records used to stop the form being
-              misused are short-lived and deleted automatically.
+              misused are short-lived and deleted automatically. The counts of visits are kept for
+              one year and then deleted.
             </p>
             <p>
               <em>Cookies.</em> This site sets no advertising or analytics cookies. Your browser
