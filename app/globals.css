@@ -362,13 +362,16 @@ body {
   padding: 0 var(--sp-4);
   flex-shrink: 0;
 }
-/* The title and lede grow with the viewport through the package's fluid
-   tokens, and take fixed steps from 1100px (below). An application never
-   writes its own clamp() for a font size (domico AGENTS.md, rule 2). */
+/* The title is the page's h1 and stands one step of the type scale above the
+   section headings (h2) at every width: 2xl over xl on a phone, 3xl over 2xl
+   from 521px, 4xl over 2xl from 1100px. The fluid --fs-display fell below the
+   section headings on anything narrower than 975px. The lede grows with the
+   viewport through the package's fluid token. An application never writes its
+   own clamp() for a font size (domico AGENTS.md, rule 2). */
 .hero-title {
   font-family: var(--font-serif);
   font-weight: var(--fw-regular);
-  font-size: var(--fs-display);
+  font-size: var(--fs-2xl);
   line-height: var(--lh-tight);
   color: var(--fg-1);
   margin: 0 0 var(--sp-5) 0;
@@ -384,6 +387,9 @@ body {
   /* Balance, not the package's pretty: pretty still left the last word of a
      centred lede on a line of its own. Balanced lines leave no short last line. */
   text-wrap: balance;
+}
+@media (min-width: 521px) {
+  .hero-title { font-size: var(--fs-3xl); }
 }
 @media (min-width: 1100px) {
   .hero-title { font-size: var(--fs-4xl); }
@@ -616,6 +622,9 @@ html:has(.alpha-notice) {
    on narrow phones. */
 @media (max-width: 520px) {
   .team-list { grid-template-columns: 1fr; }
+
+  /* One step under the hero's title, which is 2xl at this width. */
+  .section-heading { font-size: var(--fs-xl); }
 
   /* Field above button: side by side, the address would get a third of a
      phone's width. */
