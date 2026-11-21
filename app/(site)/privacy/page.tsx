@@ -96,8 +96,8 @@ export default function PrivacyPage() {
             <p>
               <em>How long.</em> Your address is kept until you unsubscribe or ask us to delete
               it, and no longer than the waitlist is needed for news of the opening; the testing list
-              closes when testing ends, or with the waitlist. Records used to stop the form being
-              misused are short-lived and deleted automatically. The counts of visits are kept for
+              closes when testing ends, or with the waitlist. Records used to stop the form or the
+              counting being misused are short-lived and deleted automatically. The counts of visits are kept for
               one year and then deleted.
             </p>
             <p>

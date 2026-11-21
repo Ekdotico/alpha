@@ -56,7 +56,7 @@ describe('the privacy page, counting visits', () => {
   // The owner's approved retention sentence, last in the paragraph, the rest as it was.
   it('keeps the counts for one year, as the last sentence of the retention paragraph', () => {
     expect(paragraphs()).toContain(
-      'How long. Your address is kept until you unsubscribe or ask us to delete it, and no longer than the waitlist is needed for news of the opening; the testing list closes when testing ends, or with the waitlist. Records used to stop the form being misused are short-lived and deleted automatically. The counts of visits are kept for one year and then deleted.',
+      'How long. Your address is kept until you unsubscribe or ask us to delete it, and no longer than the waitlist is needed for news of the opening; the testing list closes when testing ends, or with the waitlist. Records used to stop the form or the counting being misused are short-lived and deleted automatically. The counts of visits are kept for one year and then deleted.',
     );
   });
 
