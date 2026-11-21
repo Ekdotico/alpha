@@ -1,9 +1,10 @@
 import { forward } from '@/lib/analytics-proxy';
+import { consumeIngest } from '@/lib/rate-limit';
 
-// The path the browser reports to; see lib/analytics-proxy.ts.
+// The path the browser reports to; see lib/analytics-proxy.ts. POST only: the
+// library sends its events as one POST to /ingest/e/.
 type Context = { params: Promise<{ path: string[] }> };
 
-const handle = async (request: Request, { params }: Context) =>
-  forward(request, (await params).path);
-
-export { handle as GET, handle as POST, handle as OPTIONS };
+export async function POST(request: Request, { params }: Context) {
+  return forward(request, (await params).path, consumeIngest);
+}

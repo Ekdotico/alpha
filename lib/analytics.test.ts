@@ -75,6 +75,23 @@ describe('scrub', () => {
     });
   });
 
+  // A3: `$set` and `$set_once` sit beside `properties`, not inside it.
+  it('drops a top-level $set and $set_once, and keeps only the event, its id and its time', () => {
+    const when = new Date(0);
+    const sent = scrub({
+      event: 'waitlist_submit',
+      uuid: 'u-1',
+      timestamp: when,
+      properties: { outcome: 'ok' },
+      $set: { email: SENTINEL },
+      $set_once: { email: SENTINEL },
+      extra: SENTINEL,
+    } as Parameters<typeof scrub>[0]);
+    expect(Object.keys(sent ?? {}).sort()).toEqual(['event', 'properties', 'timestamp', 'uuid']);
+    expect(sent).toMatchObject({ uuid: 'u-1', timestamp: when });
+    expect(JSON.stringify(sent)).not.toContain('SENTINEL');
+  });
+
   it('keeps nothing in the browser, and nothing about a person or a page', () => {
     expect(buildConfig()).toMatchObject({
       persistence: 'memory',
@@ -85,6 +102,7 @@ describe('scrub', () => {
       disable_session_recording: true,
       disable_surveys: true,
       advanced_disable_flags: true,
+      disable_external_dependency_loading: true,
       api_host: '/ingest',
     });
   });

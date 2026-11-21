@@ -70,9 +70,9 @@ export function outcomeOf(result: WaitlistResult): Outcome {
  * on the list is dropped; one that is keeps its one schema property, if that
  * holds a member of the closed set, and the system properties.
  */
-export function scrub<T extends { event: string; properties?: Record<string, unknown> }>(
-  event: T | null,
-): T | null {
+export function scrub<
+  T extends { event: string; uuid?: string; timestamp?: Date; properties?: Record<string, unknown> },
+>(event: T | null): T | null {
   if (!event || !isEventName(event.event)) return null;
   const { key, values, fallback } = SCHEMA[event.event];
   const given = event.properties ?? {};
@@ -81,7 +81,15 @@ export function scrub<T extends { event: string; properties?: Record<string, unk
   const value = given[key];
   properties[key] = typeof value === 'string' && values.includes(value) ? value : fallback;
   properties.$geoip_disable = true;
-  return { ...event, properties };
+  // Built from named fields, not spread from the event: a top-level `$set` or
+  // `$set_once`, which sit beside `properties`, cannot pass.
+  const scrubbed: { event: string; uuid?: string; timestamp?: Date; properties: Record<string, unknown> } = {
+    event: event.event,
+    properties,
+  };
+  if (event.uuid !== undefined) scrubbed.uuid = event.uuid;
+  if (event.timestamp !== undefined) scrubbed.timestamp = event.timestamp;
+  return scrubbed as unknown as T;
 }
 
 /** The key, or null when analytics is off. Read where Next inlines it. */
@@ -114,6 +122,9 @@ export function buildConfig(): Partial<PostHogConfig> {
     disable_surveys: true,
     advanced_disable_flags: true,
     save_referrer: false,
+    // No script from anywhere: the toolbar, which a URL fragment can start, and
+    // every extension are fetched as external dependencies.
+    disable_external_dependency_loading: true,
     before_send: (event) => scrub(event),
   };
 }
