@@ -17,8 +17,9 @@
    rules that could tie, so its position in the cascade does not matter, and
    docs keeps it there too. */
 @import '@ekdotico/domico/styles.css';
-/* The wide-screen frame, from the package since 0.47.0: above 1440px the page
-   is a sheet capped at 1440px on a slightly darker ground. */
+/* The wide-screen frame, from the package since 0.47.0 and 1920px wide since
+   0.48.2: above 1920px the page is a sheet capped at that width on a slightly
+   darker ground. */
 @import '@ekdotico/domico/styles/frame.css';
 
 /* ============================================================
@@ -98,7 +99,7 @@ body {
   zoom: var(--page-zoom);
 }
 
-/* The page is never wider than 1440px. On a wider screen it stands as a sheet
+/* The page is never wider than 1920px. On a wider screen it stands as a sheet
    in the middle of a ground a little darker than itself, set off from it by a
    one-pixel rule on each side. Everything that used
    to run the window's width, the header's rule, the hero's illustration,
@@ -108,7 +109,7 @@ body {
    where 100vw stood. The ground is the canvas under a 3% layer of black, so it
    is darker than the page in every theme. */
 :root {
-  --page-max: 1440px;
+  --page-max: 1920px;
   --page-w: min(100vw / var(--page-zoom), var(--page-max));
   /* The sheet itself is the package's styles/frame.css, imported at the top
      of this file. It divides its screen-tall minimum back by this factor. */
