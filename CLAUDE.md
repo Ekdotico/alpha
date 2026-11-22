@@ -83,3 +83,7 @@ The brand is **scholarly, measured, calm** — closer to a university press or w
 1. **Match the book, not the dashboard.**
 2. **Restraint signals rigor.** Hairlines and warmth over gradients and glow.
 3. **Reading is the job.** Hierarchy through type and rhythm, not boxes.
+
+## External links open in a new tab
+
+Every link that leaves the site opens in a new tab: `http(s):` to another origin (sister sites included), `mailto:` and `tel:`. Write `target="_blank" rel="noopener noreferrer"` and `<span className="sr-only"> (opens in a new tab)</span>`, or put the same words in the `aria-label` of an icon-only link. Internal links stay in the same tab. The owner decided this on 2026-11-23. The pattern is in `node_modules/@ekdotico/domico/AGENTS.md`.
