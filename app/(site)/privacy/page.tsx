@@ -70,7 +70,7 @@ export default function PrivacyPage() {
             </p>
             <p>
               <em>Who holds it.</em> The Ekdotico team, reachable at{' '}
-              <a href={`mailto:${SITE_META.contact}`}>{SITE_META.contact}</a>.
+              <a href={`mailto:${SITE_META.contact}`} target="_blank" rel="noopener noreferrer">{SITE_META.contact}<span className="sr-only"> (opens in a new tab)</span></a>.
             </p>
             <p>
               <em>Why we may hold it.</em> For the waitlist and the testing email, your consent,
